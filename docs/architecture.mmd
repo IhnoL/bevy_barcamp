@@ -1,7 +1,8 @@
 %% Mermaid class diagram
 classDiagram
-    class Main
-    class GameController
+    class GameController{
+        on_restart()
+    }
     class Terrain {
         on_init()
     }
@@ -17,6 +18,7 @@ classDiagram
     }
     class GameState {
         <<state>>
+        Start
         Initializing
         Running
         Over
@@ -26,7 +28,13 @@ classDiagram
         Direction direction
         bool active
     }
-    Main --> GameController
+    class InitCompleteEvent {
+        <<event>>
+        CompletedType type
+    }
+    class Restart {
+        <<event>>
+    }
     GameController --> Interaction
     GameController --> GameState
     GameController --> Player
@@ -35,3 +43,8 @@ classDiagram
     GameState ..> Player
     Interaction --> Move
     Move ..> Player
+    Terrain --> InitCompleteEvent
+    Camera --> InitCompleteEvent
+    Player --> InitCompleteEvent
+    InitCompleteEvent ..> GameController
+    Restart ..> GameController

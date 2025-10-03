@@ -1,0 +1,20 @@
+classDiagram
+    class TestController {
+        run_test()
+    }
+    class MovementTest {
+        move_right_test()
+        move_left_test()
+    }
+    class TestEventHandler {
+        capture_player_position()
+        move_player()
+        verify_player_position_changed()
+    }
+    class TestEvent {
+        <<event>>
+    }
+
+    TestController --> MovementTest
+    TestController --> TestEvent
+    TestEvent ..> TestEventHandler
