@@ -1,0 +1,37 @@
+%% Mermaid class diagram
+classDiagram
+    class Main
+    class GameController
+    class Terrain {
+        on_init()
+    }
+    class Camera {
+        on_init()
+    }
+    class Player {
+        on_init()
+        on_move()
+    }
+    class Interaction {
+        move()
+    }
+    class GameState {
+        <<state>>
+        Initializing
+        Running
+        Over
+    }
+    class Move {
+        <<event>>
+        Direction direction
+        bool active
+    }
+    Main --> GameController
+    GameController --> Interaction
+    GameController --> GameState
+    GameController --> Player
+    GameState ..> Terrain
+    GameState ..> Camera
+    GameState ..> Player
+    Interaction --> Move
+    Move ..> Player
