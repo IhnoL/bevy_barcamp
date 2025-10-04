@@ -1,0 +1,24 @@
+%% High-level relationships remain for context
+classDiagram
+    class TestController {
+        run_tests()
+        queue: TestQueue
+    }
+    class MovementTest {
+        provide_events()
+    }
+    class TestEventHandler {
+        respond_to_test_events()
+    }
+    class TestEvent {
+        <<event>>
+    }
+    class TestEventCompleted {
+        <<event>>
+    }
+
+    TestController --> MovementTest
+    TestController --> TestEvent
+    TestEvent ..> TestEventHandler
+    TestEventHandler --> TestEventCompleted
+    TestEventCompleted ..> TestController

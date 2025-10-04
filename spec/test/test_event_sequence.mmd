@@ -1,0 +1,26 @@
+flowchart TD
+    A["run_tests()"]
+    B["restart game"]
+    C["add events to queue"]
+    D{"TestState == Running ?"}
+    E["pop_event_queue()"]
+    P{"Queue empty ?"}
+    H["WaitingCounter := events_count"]
+    G["TestState := WaitingFor"]
+    F["Send TestStep Events"]
+    S["TestState := Completed"]
+    J{"TestStepCompleted received ?"}
+    K["WaitingCounter -= 1"]
+    L{"WaitingCounter == 0 ?"}
+    M["TestState := Running"]
+    U["update()"]
+
+    A --> B --> C --> U
+    D --> U
+    U --> D
+    D -- Yes --> E --> P
+    P -- Yes --> S
+    P -- No --> F --> G --> H
+    D -- No --> J
+    J -- Yes --> K --> L
+    L --> M

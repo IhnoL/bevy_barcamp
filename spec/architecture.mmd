@@ -1,16 +1,18 @@
 %% Mermaid class diagram
 classDiagram
     class GameController{
-        on_restart()
     }
     class Terrain {
         on_init()
+        on_quit()
     }
     class Camera {
         on_init()
+        on_quit()
     }
     class Player {
         on_init()
+        on_quit()
         on_move()
     }
     class Interaction {
@@ -18,21 +20,23 @@ classDiagram
     }
     class GameState {
         <<state>>
-        Start
+        Uninitialized
         Initializing
         Running
-        Over
+        Quitting
     }
     class Move {
         <<event>>
         Direction direction
         bool active
     }
-    class InitCompleteEvent {
-        <<event>>
-        CompletedType type
+    class CompletionCounter {
+        <<resource>>
     }
-    class Restart {
+    class Start {
+        <<event>>
+    }
+    class Quit {
         <<event>>
     }
     GameController --> Interaction
@@ -43,8 +47,9 @@ classDiagram
     GameState ..> Player
     Interaction --> Move
     Move ..> Player
-    Terrain --> InitCompleteEvent
-    Camera --> InitCompleteEvent
-    Player --> InitCompleteEvent
-    InitCompleteEvent ..> GameController
-    Restart ..> GameController
+    Terrain --> CompletionCounter
+    Camera --> CompletionCounter
+    Player --> CompletionCounter
+    CompletionCounter ..> GameController
+    Start ..> GameController
+    Quit ..> GameController
