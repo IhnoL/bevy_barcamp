@@ -9,7 +9,7 @@ flowchart TD
     G["TestState := WaitingFor"]
     F["Send TestStep Events"]
     S["TestState := Completed"]
-    J{"TestStepCompleted received ?"}
+    J{"WaitingCounter changed ?"}
     K["WaitingCounter -= 1"]
     L{"WaitingCounter == 0 ?"}
     M["TestState := Running"]
