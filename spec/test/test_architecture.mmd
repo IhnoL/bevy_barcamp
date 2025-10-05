@@ -13,14 +13,19 @@ classDiagram
         verify_player_moved()
     }
     class TestStep {
+        <<trait>>
+    }
+    class CapturePlayerPosition {
         <<event>>
     }
     class StepsWaiting {
         <<resource>>
+        increase()
+        decrease()
     }
 
     TestController --> MovementTest
-    TestController --> TestStep
-    TestStep ..> MovementStepHandler
+    TestController --> CapturePlayerPosition
+    CapturePlayerPosition --|> TestStep
+    CapturePlayerPosition ..> MovementStepHandler
     MovementStepHandler --> StepsWaiting
-    StepsWaiting ..> TestController
