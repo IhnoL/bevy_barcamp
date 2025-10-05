@@ -19,7 +19,7 @@
 ## Player(Plugin)
 - Owns Bevy-Component: Player
 - Interaction Events (e.g. Move) should only be received in GameState::Running
-- Is visualized by a stick man: Each body part (head, torso, arms, legs) are an independent line with common parent
+- Is visualized by a stick man: Each body part (head, torso, arms, legs) is an independent line with common parent
 
 # GameState transitions
 - Must always be in the Order: Uninitialized -> Initializing -> Running -> Quitting -> Uninitialized

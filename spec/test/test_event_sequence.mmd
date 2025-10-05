@@ -1,26 +1,19 @@
 flowchart TD
-    A["run_tests()"]
-    B["restart game"]
-    C["add events to queue"]
-    D{"TestState == Running ?"}
-    E["pop_event_queue()"]
-    P{"Queue empty ?"}
-    H["WaitingCounter := events_count"]
-    G["TestState := WaitingFor"]
-    F["Send TestStep Events"]
-    S["TestState := Completed"]
-    J{"WaitingCounter changed ?"}
-    K["WaitingCounter -= 1"]
-    L{"WaitingCounter == 0 ?"}
-    M["TestState := Running"]
-    U["update()"]
+    Run["run_tests()"]
+    Start["add start game step"]
+    AddMovement["add test steps by calling provide_steps()"]
+    Quit["add quit game step to queue"]
+    Repeat[".. repeat above for each test .."]
+    UnfinishedSteps{"UnfinishedSteps == 0 ?"}
+    Send["send_step_from_queue()"]
+    Update["Update() - loop"]
+    IncreaseWaiting["UnfinishedSteps ++"]
+    DecreaseWaiting["UnfinishedSteps --"]
+    ExecuteStep["execute_step()"]
+    StepsWaiting{"Steps  waiting ?"}
 
-    A --> B --> C --> U
-    D --> U
-    U --> D
-    D -- Yes --> E --> P
-    P -- Yes --> S
-    P -- No --> F --> G --> H
-    D -- No --> J
-    J -- Yes --> K --> L
-    L --> M
+    Run --> Quit --> Start --> AddMovement --> Repeat --> Update
+    Update --> UnfinishedSteps
+    Update --> StepsWaiting -- Yes--> ExecuteStep --> DecreaseWaiting
+
+    UnfinishedSteps -- Yes -->   Send --> IncreaseWaiting

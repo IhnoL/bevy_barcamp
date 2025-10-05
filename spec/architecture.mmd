@@ -16,7 +16,7 @@ classDiagram
         on_move()
     }
     class Interaction {
-        move()
+        move_player()
     }
     class GameState {
         <<state>>
@@ -25,18 +25,18 @@ classDiagram
         Running
         Quitting
     }
-    class Move {
+    class PlayerMove {
         <<event>>
         Direction direction
         bool active
     }
-    class CompletionCounter {
+    class StateCompletionCounter {
         <<resource>>
     }
-    class Start {
+    class StartGame {
         <<event>>
     }
-    class Quit {
+    class QuitGame{
         <<event>>
     }
     GameController --> Interaction
@@ -45,11 +45,11 @@ classDiagram
     GameState ..> Terrain
     GameState ..> Camera
     GameState ..> Player
-    Interaction --> Move
-    Move ..> Player
-    Terrain --> CompletionCounter
-    Camera --> CompletionCounter
-    Player --> CompletionCounter
-    CompletionCounter ..> GameController
-    Start ..> GameController
-    Quit ..> GameController
+    Interaction --> PlayerMove
+    PlayerMove ..> Player
+    Terrain --> StateCompletionCounter
+    Camera --> StateCompletionCounter
+    Player --> StateCompletionCounter
+    StateCompletionCounter ..> GameController
+    StartGame ..> GameController
+    QuitGame..> GameController

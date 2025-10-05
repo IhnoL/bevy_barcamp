@@ -5,20 +5,22 @@ classDiagram
         queue: TestQueue
     }
     class MovementTest {
-        provide_events()
+        provide_steps()
     }
-    class TestEventHandler {
-        respond_to_test_events()
+    class MovementStepHandler {
+        capture_player_position()
+        send_move_event()
+        verify_player_moved()
     }
-    class TestEvent {
+    class TestStep {
         <<event>>
     }
-    class TestEventCompleted {
-        <<event>>
+    class StepsWaiting {
+        <<resource>>
     }
 
     TestController --> MovementTest
-    TestController --> TestEvent
-    TestEvent ..> TestEventHandler
-    TestEventHandler --> TestEventCompleted
-    TestEventCompleted ..> TestController
+    TestController --> TestStep
+    TestStep ..> MovementStepHandler
+    MovementStepHandler --> StepsWaiting
+    StepsWaiting ..> TestController
