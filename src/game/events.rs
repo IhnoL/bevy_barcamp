@@ -1,4 +1,4 @@
-use bevy::prelude::Event;
+use bevy::prelude::{Event, Message};
 
 #[derive(Event)]
 pub struct StartGame;
@@ -6,7 +6,7 @@ pub struct StartGame;
 #[derive(Event)]
 pub struct QuitGame;
 
-#[derive(Event)]
+#[derive(Event, Message)]
 pub struct PlayerMove {
     pub direction: Direction,
     pub active: bool,

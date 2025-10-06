@@ -1,28 +1,22 @@
+mod events;
 mod includes;
 mod jump_test;
 mod movement_test;
 use bevy::prelude::*;
 use includes::*;
+use events::{QuitGameStep, StartGameStep};
 
-#[derive(Default, Resource)]
-pub struct TestQueue;
-
-#[derive(Event)]
-pub struct StartGameStep;
-
-#[derive(Event)]
-pub struct QuitGameStep;
-
-
-pub fn queue_tests_on_startup(mut _controller: ResMut<TestController>) {
-    let _registered_tests: &[fn() -> TestEvents] =
-        &[movement_test::provide_steps, jump_test::provide_steps];
-    let _tests: TestEvents = todo!("Collect test events from registered tests");
-    todo!("Queue the gathered test events");
+#[derive(Default)]
+pub struct TestQueue {
+    pub steps: Vec<Box<dyn TestStep>>,
 }
 
-
 fn main() {
-    let mut app = App::new();
-    todo!("Run the configured Bevy app once the test runner wiring is ready");
+   // Use the app created in "lib.rs"
+    // add quit and start tep to queue
+    // fetch test steps from movement_test and add to queue
+    // another quit and start step
+    // fetch jump test
+    // run the tests
+
 }
