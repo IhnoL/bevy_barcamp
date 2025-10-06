@@ -21,7 +21,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
 }
 
 #[allow(dead_code)]
-pub fn handle_capture_player_position(mut _events: EventReader<CapturePlayerPosition>) {
+pub fn handle_capture_player_position(mut _events: MessageReader<CapturePlayerPosition>) {
     todo!("Record player position for later verification");
 }
 
@@ -34,6 +34,6 @@ pub fn handle_move_player(world: &mut World, step: &MovePlayer) {
 }
 
 #[allow(dead_code)]
-pub fn handle_verify_player_moved(mut _events: EventReader<VerifyPlayerMoved>) {
+pub fn handle_verify_player_moved(mut _events: MessageReader<VerifyPlayerMoved>) {
     todo!("Check captured positions and assert expected movement");
 }
