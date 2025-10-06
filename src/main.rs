@@ -1,3 +1,5 @@
+use bevy::app::App;
+
 fn main() {
-    bevy_barcamp::run();
+    bevy_barcamp::run(App::new());
 }
