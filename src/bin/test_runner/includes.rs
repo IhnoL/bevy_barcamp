@@ -2,10 +2,8 @@ pub use bevy::prelude::*;
 pub use bevy_barcamp::game::events::{Direction, PlayerMove};
 use std::any::Any;
 
-pub trait TestStep: Any + Send + Sync + 'static {
+pub trait TestStep: Send + Sync + 'static {
     fn send(&self, world: &mut World);
-
-    fn as_any(&self) -> &dyn Any;
 }
 
 macro_rules! step {

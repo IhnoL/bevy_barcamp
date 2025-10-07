@@ -23,60 +23,31 @@ pub struct VerifyPlayerMoved {
 }
 
 impl TestStep for StartGameStep {
-
-
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
 
 impl TestStep for QuitGameStep {
-   
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
 
 impl TestStep for CapturePlayerPosition {
-
-
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
 
 impl TestStep for TriggerMovePlayer {
- 
-
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
 
 impl TestStep for VerifyPlayerMoved {
-
-
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
-    }
-
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
     }
 }
