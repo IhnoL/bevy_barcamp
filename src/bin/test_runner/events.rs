@@ -3,17 +3,17 @@ use bevy_barcamp::game::events::Direction;
 
 use crate::includes::TestStep;
 
-#[derive(Event)]
+#[derive(Event, Message)]
 pub struct StartGameStep;
 
-#[derive(Event)]
+#[derive(Event, Message)]
 pub struct QuitGameStep;
 
 #[derive(Event, Message)]
 pub struct CapturePlayerPosition;
 
 #[derive(Event, Message)]
-pub struct MovePlayer {
+pub struct TriggerMovePlayer {
     pub direction: Direction,
 }
 
@@ -23,51 +23,40 @@ pub struct VerifyPlayerMoved {
 }
 
 impl TestStep for StartGameStep {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
+
 
     fn send(&self, world: &mut World) {
-        world.send_event(*self);
+        world.write_message(self.clone());
     }
 }
 
 impl TestStep for QuitGameStep {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
-
+   
     fn send(&self, world: &mut World) {
-        world.send_event(*self);
+        world.write_message(self.clone());
     }
 }
 
 impl TestStep for CapturePlayerPosition {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
+
 
     fn send(&self, world: &mut World) {
-        world.send_event(*self);
+        world.write_message(self.clone());
     }
 }
 
-impl TestStep for MovePlayer {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
+impl TestStep for TriggerMovePlayer {
+ 
 
     fn send(&self, world: &mut World) {
-        world.send_event(*self);
+        world.write_message(self.clone());
     }
 }
 
 impl TestStep for VerifyPlayerMoved {
-    fn as_any(&self) -> &dyn std::any::Any {
-        self
-    }
+
 
     fn send(&self, world: &mut World) {
-        world.send_event(*self);
+        world.write_message(self.clone());
     }
 }
