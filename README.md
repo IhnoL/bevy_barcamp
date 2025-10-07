@@ -6,6 +6,7 @@ This project is built with [Rust](https://www.rust-lang.org/learn/get-started) a
 
 - Install the Rust toolchain by following the official setup guide linked above.
 - Run `cargo run` from the repository root to launch the application.
+- Run `cargo run --bin test_runner` to execute the automated test suite.
 
 ## Bevy 0.17 Events and Messages
 

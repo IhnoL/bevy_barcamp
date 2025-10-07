@@ -27,22 +27,21 @@ fn main() {
     run_tests(test_queue);
 }
 
-fn run_tests(test_queue: TestStepQueue) {
+fn setup_test_app(test_queue: TestStepQueue) -> App {
     let mut app = App::new();
-
     app.insert_resource(test_queue)
-        .init_resource::<UnfinishedSteps>()        
-        .add_systems(Update, (send_step_from_queue,).chain());
+        .init_resource::<UnfinishedSteps>()
+        .add_systems(Update, (send_step_from_queue,).chain())
+        .add_observer(handle_start_game)
+        .add_observer(handle_quit_game)
+        .add_observer(movement_test::handle_capture_player_position)
+        .add_observer(movement_test::handle_move_player)
+        .add_observer(movement_test::handle_verify_player_moved);
+    app
+}
 
-    {
-        let world = app.world_mut();
-        world.add_observer(handle_start_game);
-        world.add_observer(handle_quit_game);
-        world.add_observer(movement_test::handle_capture_player_position);
-        world.add_observer(movement_test::handle_move_player);
-        world.add_observer(movement_test::handle_verify_player_moved);
-    }
-
+fn run_tests(test_queue: TestStepQueue) {
+    let app = setup_test_app(test_queue);
     bevy_barcamp::run(app);
 }
 
@@ -74,13 +73,44 @@ fn handle_start_game(
     println!("StartGameStep completed.");
 }
 
-fn handle_quit_game(
-    _quit_event: On<QuitGameStep>,
-    mut unfinished_steps: ResMut<UnfinishedSteps>,
-) {
+fn handle_quit_game(_quit_event: On<QuitGameStep>, mut unfinished_steps: ResMut<UnfinishedSteps>) {
     println!("Handling QuitGameStep");
 
     unfinished_steps.0 -= 1;
 
     println!("QuitGameStep completed.");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_queue_processes_steps_sequentially() {
+        // Setup
+        let mut test_queue = TestStepQueue::default();
+        test_queue.steps.push_back(step!(StartGameStep));
+        test_queue.steps.push_back(step!(QuitGameStep));
+        test_queue.steps.push_back(step!(StartGameStep));
+        let mut app = setup_test_app(test_queue);
+
+        // Verify initial state
+        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 3);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
+
+        // Process first step
+        app.update();
+        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 2);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
+
+        // Process second step
+        app.update();
+        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 1);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
+
+        // Process third step
+        app.update();
+        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 0);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
+    }
 }
