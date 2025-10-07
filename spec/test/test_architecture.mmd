@@ -18,7 +18,7 @@ classDiagram
     class CapturePlayerPosition {
         <<event>>
     }
-    class StepsWaiting {
+    class UnfinishedSteps {
         <<resource>>
         increase()
         decrease()
@@ -28,4 +28,4 @@ classDiagram
     TestController --> CapturePlayerPosition
     CapturePlayerPosition --|> TestStep
     CapturePlayerPosition ..> MovementStepHandler
-    MovementStepHandler --> StepsWaiting
+    MovementStepHandler --> UnfinishedSteps
