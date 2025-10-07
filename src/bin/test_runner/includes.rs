@@ -6,6 +6,7 @@ pub use crate::TestQueue;
 
 pub trait TestStep: Send + Sync + 'static {
     fn as_any(&self) -> &dyn std::any::Any;
+    fn send(&self, world: &mut World);
 }
 
 macro_rules! step {
@@ -16,6 +17,10 @@ macro_rules! step {
 
 pub(crate) use step;
 
+/// Resource to track unfinished test steps
 #[derive(Default, Resource)]
-#[allow(dead_code)]
-pub struct StepsWaiting;
+pub struct UnfinishedSteps(pub u32);
+
+/// Resource to track if steps are currently waiting
+#[derive(Default, Resource)]
+pub struct UnfinishedSteps(pub bool);

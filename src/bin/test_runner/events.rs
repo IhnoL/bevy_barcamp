@@ -26,11 +26,19 @@ impl TestStep for StartGameStep {
     fn as_any(&self) -> &dyn std::any::Any {
         self
     }
+
+    fn send(&self, world: &mut World) {
+        world.send_event(*self);
+    }
 }
 
 impl TestStep for QuitGameStep {
     fn as_any(&self) -> &dyn std::any::Any {
         self
+    }
+
+    fn send(&self, world: &mut World) {
+        world.send_event(*self);
     }
 }
 
@@ -38,16 +46,28 @@ impl TestStep for CapturePlayerPosition {
     fn as_any(&self) -> &dyn std::any::Any {
         self
     }
+
+    fn send(&self, world: &mut World) {
+        world.send_event(*self);
+    }
 }
 
 impl TestStep for MovePlayer {
     fn as_any(&self) -> &dyn std::any::Any {
         self
     }
+
+    fn send(&self, world: &mut World) {
+        world.send_event(*self);
+    }
 }
 
 impl TestStep for VerifyPlayerMoved {
     fn as_any(&self) -> &dyn std::any::Any {
         self
+    }
+
+    fn send(&self, world: &mut World) {
+        world.send_event(*self);
     }
 }
