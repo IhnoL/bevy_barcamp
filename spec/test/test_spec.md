@@ -14,5 +14,8 @@
 - MovePlayer(direction:=left)
 - VerifyPlayerMoved(direction:=left)
 
+## Terrain-Test
+- VerifyTerrainSpawned()
+
 ## Jump-Test 
 - TBD: Will be implemented later

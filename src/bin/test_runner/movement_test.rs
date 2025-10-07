@@ -26,7 +26,7 @@ pub fn handle_capture_player_position(
 ) {
     println!("Handling CapturePlayerPosition");
 
-    unfinished_steps.0 -= 1;
+    unfinished_steps.complete_step();
 
     println!("CapturePlayerPosition completed.");
 }
@@ -35,12 +35,9 @@ pub fn handle_move_player(
     move_event: On<TriggerMovePlayer>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
 ) {
-    println!(
-        "Handling TriggerMovePlayer {:?}",
-        move_event.direction
-    );
+    println!("Handling TriggerMovePlayer {:?}", move_event.direction);
 
-    unfinished_steps.0 -= 1;
+    unfinished_steps.complete_step();
     println!("TriggerMovePlayer completed. ");
 }
 
@@ -53,6 +50,6 @@ pub fn handle_verify_player_moved(
         verify_event.expected_direction
     );
 
-    unfinished_steps.0 -= 1;
+    unfinished_steps.complete_step();
     println!("VerifyPlayerMoved completed.",);
 }

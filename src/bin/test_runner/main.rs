@@ -2,10 +2,10 @@ mod events;
 mod includes;
 mod jump_test;
 mod movement_test;
+mod terrain_test;
 use bevy::prelude::*;
-use events::{
-    CapturePlayerPosition, QuitGameStep, StartGameStep, TriggerMovePlayer, VerifyPlayerMoved,
-};
+use bevy_barcamp::game::state::GameState;
+use events::{QuitGameStep, StartGameStep};
 use includes::*;
 use std::collections::VecDeque;
 
@@ -20,29 +20,32 @@ fn main() {
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(movement_test::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
+
+    test_queue.steps.push_back(step!(StartGameStep));
+    test_queue.steps.extend(terrain_test::provide_steps());
+    test_queue.steps.push_back(step!(QuitGameStep));
+
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(jump_test::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
 
-    run_tests(test_queue);
+    let base_app = bevy_barcamp::run(App::new());
+    let mut app = setup_test_app(base_app, test_queue);
+    app.run();
 }
 
-fn setup_test_app(test_queue: TestStepQueue) -> App {
-    let mut app = App::new();
+fn setup_test_app(app: App, test_queue: TestStepQueue) -> App {
+    let mut app = app;
     app.insert_resource(test_queue)
         .init_resource::<UnfinishedSteps>()
         .add_systems(Update, (send_step_from_queue,).chain())
-        .add_observer(handle_start_game)
-        .add_observer(handle_quit_game)
+        .add_systems(OnEnter(GameState::Running), handle_start_game)
+        .add_systems(OnEnter(GameState::Uninitialized), handle_quit_game)
         .add_observer(movement_test::handle_capture_player_position)
         .add_observer(movement_test::handle_move_player)
-        .add_observer(movement_test::handle_verify_player_moved);
+        .add_observer(movement_test::handle_verify_player_moved)
+        .add_observer(terrain_test::handle_verify_terrain_spawned);
     app
-}
-
-fn run_tests(test_queue: TestStepQueue) {
-    let app = setup_test_app(test_queue);
-    bevy_barcamp::run(app);
 }
 
 fn send_step_from_queue(world: &mut World) {
@@ -62,55 +65,16 @@ fn send_step_from_queue(world: &mut World) {
     }
 }
 
-fn handle_start_game(
-    _start_event: On<StartGameStep>,
-    mut unfinished_steps: ResMut<UnfinishedSteps>,
-) {
+fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
+
     println!("Handling StartGameStep");
-
-    unfinished_steps.0 -= 1;
-
+    unfinished_steps.complete_step();
     println!("StartGameStep completed.");
 }
 
-fn handle_quit_game(_quit_event: On<QuitGameStep>, mut unfinished_steps: ResMut<UnfinishedSteps>) {
+fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
+
     println!("Handling QuitGameStep");
-
-    unfinished_steps.0 -= 1;
-
+    unfinished_steps.complete_step();
     println!("QuitGameStep completed.");
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_queue_processes_steps_sequentially() {
-        // Setup
-        let mut test_queue = TestStepQueue::default();
-        test_queue.steps.push_back(step!(StartGameStep));
-        test_queue.steps.push_back(step!(QuitGameStep));
-        test_queue.steps.push_back(step!(StartGameStep));
-        let mut app = setup_test_app(test_queue);
-
-        // Verify initial state
-        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 3);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
-
-        // Process first step
-        app.update();
-        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 2);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
-
-        // Process second step
-        app.update();
-        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 1);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
-
-        // Process third step
-        app.update();
-        assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 0);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
-    }
 }

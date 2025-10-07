@@ -1,5 +1,6 @@
-use bevy::app::App;
+use bevy::prelude::App;
 
 fn main() {
-    bevy_barcamp::run(App::new());
+    let mut app = bevy_barcamp::run(App::new());
+    app.run();
 }

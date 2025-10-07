@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_barcamp::game::events::Direction;
+use bevy_barcamp::game::state::GameState;
 
 use crate::includes::TestStep;
 
@@ -22,15 +23,22 @@ pub struct VerifyPlayerMoved {
     pub expected_direction: Direction,
 }
 
+#[derive(Clone, Event, Message)]
+pub struct VerifyTerrainSpawned;
+
 impl TestStep for StartGameStep {
     fn send(&self, world: &mut World) {
-        world.trigger(self.clone());
+        world
+            .resource_mut::<NextState<GameState>>()
+            .set(GameState::Running);
     }
 }
 
 impl TestStep for QuitGameStep {
     fn send(&self, world: &mut World) {
-        world.trigger(self.clone());
+        world
+            .resource_mut::<NextState<GameState>>()
+            .set(GameState::Uninitialized);
     }
 }
 
@@ -47,6 +55,12 @@ impl TestStep for TriggerMovePlayer {
 }
 
 impl TestStep for VerifyPlayerMoved {
+    fn send(&self, world: &mut World) {
+        world.trigger(self.clone());
+    }
+}
+
+impl TestStep for VerifyTerrainSpawned {
     fn send(&self, world: &mut World) {
         world.trigger(self.clone());
     }
