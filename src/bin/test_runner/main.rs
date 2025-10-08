@@ -66,14 +66,12 @@ fn send_step_from_queue(world: &mut World) {
 }
 
 fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-
     println!("Handling StartGameStep");
     unfinished_steps.complete_step();
     println!("StartGameStep completed.");
 }
 
 fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-
     println!("Handling QuitGameStep");
     unfinished_steps.complete_step();
     println!("QuitGameStep completed.");

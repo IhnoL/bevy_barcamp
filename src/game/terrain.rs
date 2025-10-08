@@ -62,7 +62,11 @@ pub fn spawn(mut commands: Commands, existing: Query<(), With<TerrainRoot>>) {
     });
 }
 
-pub fn despawn(mut commands: Commands, roots: Query<Entity, With<TerrainRoot>>, pieces: Query<Entity, With<TerrainPiece>>) {
+pub fn despawn(
+    mut commands: Commands,
+    roots: Query<Entity, With<TerrainRoot>>,
+    pieces: Query<Entity, With<TerrainPiece>>,
+) {
     for entity in pieces.iter() {
         commands.entity(entity).despawn();
     }
