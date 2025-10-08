@@ -3,16 +3,16 @@ classDiagram
     class GameController{
     }
     class Terrain {
-        on_init()
-        on_quit()
+        spawn()
+        despawn()
     }
     class Camera {
-        on_init()
-        on_quit()
+        spawn()
+        despawn()
     }
     class Player {
-        on_init()
-        on_quit()
+        spawn()
+        despawn()
         on_move()
     }
     class Interaction {
@@ -41,7 +41,6 @@ classDiagram
     }
     GameController --> Interaction
     GameController --> GameState
-    GameController --> Player
     GameState ..> Terrain
     GameState ..> Camera
     GameState ..> Player

@@ -7,6 +7,6 @@ impl Plugin for CameraPlugin {
     fn build(&self, _app: &mut App) {}
 }
 
-pub fn on_init() {}
+pub fn spawn() {}
 
-pub fn on_quit() {}
+pub fn despawn() {}

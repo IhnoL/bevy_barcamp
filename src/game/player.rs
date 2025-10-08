@@ -10,8 +10,8 @@ impl Plugin for PlayerPlugin {
 #[derive(Component)]
 pub struct Player;
 
-pub fn on_init() {}
+pub fn spawn() {}
 
-pub fn on_quit() {}
+pub fn despawn() {}
 
 pub fn on_move() {}
