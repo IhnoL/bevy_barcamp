@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use super::state::GameState;
+use super::{
+    resources::UnfinishedStateTransitions,
+    state::GameState,
+};
 
 const GROUND_SIZE: Vec2 = Vec2::new(800.0, 40.0);
 const GROUND_Y: f32 = -360.0;
@@ -29,10 +32,16 @@ impl Plugin for TerrainPlugin {
     }
 }
 
-pub fn spawn(mut commands: Commands, existing: Query<(), With<TerrainRoot>>) {
+pub fn spawn(
+    mut commands: Commands,
+    existing: Query<(), With<TerrainRoot>>,
+    mut transitions: ResMut<UnfinishedStateTransitions>,
+) {
     if !existing.is_empty() {
         return;
     }
+
+    transitions.add_one();
 
     let mut root = commands.spawn((
         Name::new("Terrain"),
@@ -60,13 +69,22 @@ pub fn spawn(mut commands: Commands, existing: Query<(), With<TerrainRoot>>) {
             ));
         }
     });
+
+    transitions.sub_one();
 }
 
 pub fn despawn(
     mut commands: Commands,
     roots: Query<Entity, With<TerrainRoot>>,
     pieces: Query<Entity, With<TerrainPiece>>,
+    mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
+    if pieces.is_empty() && roots.is_empty() {
+        return;
+    }
+
+    transitions.add_one();
+
     for entity in pieces.iter() {
         commands.entity(entity).despawn();
     }
@@ -74,4 +92,6 @@ pub fn despawn(
     for entity in roots.iter() {
         commands.entity(entity).despawn();
     }
+
+    transitions.sub_one();
 }

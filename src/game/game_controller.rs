@@ -1,4 +1,3 @@
-use bevy::ecs::system::IntoObserverSystem;
 use bevy::prelude::*;
 
 use super::{
@@ -6,7 +5,7 @@ use super::{
     events::{QuitGame, StartGame},
     interaction::InteractionPlugin,
     player::PlayerPlugin,
-    resources::UnfinishedStateTransitions,
+    resources::{TargetState, UnfinishedStateTransitions},
     state::GameState,
     terrain::TerrainPlugin,
 };
@@ -17,48 +16,43 @@ pub struct GameControllerPlugin;
 impl Plugin for GameControllerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UnfinishedStateTransitions>()
+            .init_resource::<TargetState>()
             .add_plugins((TerrainPlugin, CameraPlugin, PlayerPlugin, InteractionPlugin))
-            .add_systems(Update, advance_state)
+            .add_systems(Update, advance_state.run_if(target_state_requested))
             .add_observer(handle_start_game)
             .add_observer(handle_quit_game);
     }
 }
 
-fn handle_start_game(
-    _start: On<StartGame>,
-    state: Res<State<GameState>>,
-    transitions: Res<UnfinishedStateTransitions>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    if *state.get() == GameState::Uninitialized && transitions.is_empty() {
-        next_state.set(GameState::Initializing);
-    }
+fn handle_start_game(_start: On<StartGame>, mut target: ResMut<TargetState>) {
+    target.set(GameState::Running);
 }
 
-fn handle_quit_game(
-    _quit: On<QuitGame>,
-    state: Res<State<GameState>>,
-    transitions: Res<UnfinishedStateTransitions>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    if *state.get() == GameState::Running && transitions.is_empty() {
-        next_state.set(GameState::Quitting);
-    }
+fn handle_quit_game(_quit: On<QuitGame>, mut target: ResMut<TargetState>) {
+    target.set(GameState::Uninitialized);
 }
 
 fn advance_state(
     state: Res<State<GameState>>,
+    mut target_state_res: ResMut<TargetState>,
     transitions: Res<UnfinishedStateTransitions>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    if !transitions.is_empty() {
+    let Some(target_state) = target_state_res.get() else {
+        return;
+    };
+
+    let current_state = *state.get();
+    if current_state == target_state {
+        target_state_res.clear();
         return;
     }
 
-    let current = *state.get();
-    match current {
-        GameState::Initializing | GameState::Quitting => next_state.set(current.next()),
-        GameState::Uninitialized | GameState::Running => {}
+    if transitions.is_empty() {
+        next_state.set(current_state.next());
     }
 }
 
+fn target_state_requested(target: Res<TargetState>) -> bool {
+    target.is_set()
+}

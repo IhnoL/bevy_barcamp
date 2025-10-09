@@ -1,7 +1,10 @@
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
 
-use super::state::GameState;
+use super::{
+    resources::UnfinishedStateTransitions,
+    state::GameState,
+};
 
 const CAMERA_Z: f32 = 1000.0;
 
@@ -18,10 +21,16 @@ impl Plugin for CameraPlugin {
     }
 }
 
-pub fn spawn(mut commands: Commands, existing_cameras: Query<(), With<GameCamera>>) {
+pub fn spawn(
+    mut commands: Commands,
+    existing_cameras: Query<(), With<GameCamera>>,
+    mut transitions: ResMut<UnfinishedStateTransitions>,
+) {
     if !existing_cameras.is_empty() {
         return;
     }
+
+    transitions.add_one();
 
     commands.spawn((
         Name::new("GameCamera"),
@@ -37,10 +46,24 @@ pub fn spawn(mut commands: Commands, existing_cameras: Query<(), With<GameCamera
         Transform::from_xyz(0.0, 0.0, CAMERA_Z),
         GlobalTransform::default(),
     ));
+
+    transitions.sub_one();
 }
 
-pub fn despawn(mut commands: Commands, cameras: Query<Entity, With<GameCamera>>) {
+pub fn despawn(
+    mut commands: Commands,
+    cameras: Query<Entity, With<GameCamera>>,
+    mut transitions: ResMut<UnfinishedStateTransitions>,
+) {
+    if cameras.is_empty() {
+        return;
+    }
+
+    transitions.add_one();
+
     for entity in cameras.iter() {
         commands.entity(entity).despawn();
     }
+
+    transitions.sub_one();
 }
