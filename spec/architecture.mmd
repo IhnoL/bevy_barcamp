@@ -30,7 +30,7 @@ classDiagram
         Direction direction
         bool active
     }
-    class StateCompletionCounter {
+    class UnfinishedStateTransitions {
         <<resource>>
     }
     class StartGame {
@@ -46,9 +46,9 @@ classDiagram
     GameState ..> Player
     Interaction --> PlayerMove
     PlayerMove ..> Player
-    Terrain --> StateCompletionCounter
-    Camera --> StateCompletionCounter
-    Player --> StateCompletionCounter
-    StateCompletionCounter ..> GameController
+    Terrain --> UnfinishedStateTransitions
+    Camera --> UnfinishedStateTransitions
+    Player --> UnfinishedStateTransitions
+    UnfinishedStateTransitions ..> GameController
     StartGame ..> GameController
     QuitGame..> GameController

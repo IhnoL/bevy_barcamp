@@ -22,9 +22,14 @@
 - Is visualized by a stick man: Each body part (head, torso, arms, legs) is an independent line with common parent
 
 # GameState transitions
-- Must always be in the Order: Uninitialized -> Initializing -> Running -> Quitting -> Uninitialized
+- Must always be in the Order: Uninitialized -> Initializing -> Running -> Quitting -> Uninitialized; Implemented by a .next() "impl"
+- State transition can only be executed (mutable) by the GameController; Other modules are only listening
+- Modules that are reacting on state-change, increases the UnfinishedStateTransitions counter and decrease it on completion
+- The GameController waits for all transitions to complete before changing the state to the next
+- Initializing and Quitting are triggered by the Start-/QuitGame events; Other transitions are automatic
 
-## On Start/Quit -Event 
-- GameController sets GameState:: Initializing/Quitting 
-- Each on_init()/on_quit() is called and increases the CompletionCounter; decreasing it again on finishing 
-- GameController waits for CompletionCounter to reach 0 and then sets GameState:: Running/Uninitialized
+## States
+- Uninitialized: No entities exist in the world (anymore)
+- Initializing: Entities are spawning
+- Running: Entities are spawned and ready to use
+- Quitting: Entities are despawning
