@@ -14,7 +14,7 @@ macro_rules! step {
 pub(crate) use step;
 
 #[derive(Default, Resource)]
-pub struct UnfinishedSteps(pub i32);
+pub struct UnfinishedSteps(pub usize);
 
 impl UnfinishedSteps {
     pub fn complete_step(&mut self) {

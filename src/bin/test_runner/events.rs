@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use bevy_barcamp::game::events::Direction;
-use bevy_barcamp::game::state::GameState;
+use bevy_barcamp::game::events::{Direction, QuitGame, StartGame};
 
 use crate::includes::TestStep;
 
@@ -28,17 +27,13 @@ pub struct VerifyTerrainSpawned;
 
 impl TestStep for StartGameStep {
     fn send(&self, world: &mut World) {
-        world
-            .resource_mut::<NextState<GameState>>()
-            .set(GameState::Running);
+        world.trigger(StartGame);
     }
 }
 
 impl TestStep for QuitGameStep {
     fn send(&self, world: &mut World) {
-        world
-            .resource_mut::<NextState<GameState>>()
-            .set(GameState::Uninitialized);
+        world.trigger(QuitGame);
     }
 }
 
