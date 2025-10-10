@@ -6,4 +6,4 @@ edition = "2024"
 [dependencies]
 bevy = "0.17"
 derive-getters = "0.5.0"
-test_step_macros = { path = "test_step_macros" }
+macros = { path = "macros" }

@@ -50,6 +50,6 @@ pub fn handle_verify_terrain_spawned(
         total_pieces
     );
 
-    unfinished_steps.complete_step();
+    unfinished_steps.sub_one();
     println!("VerifyTerrainSpawned completed.");
 }

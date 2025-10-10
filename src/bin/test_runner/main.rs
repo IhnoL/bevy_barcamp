@@ -51,7 +51,7 @@ fn setup_test_app(app: App, test_queue: TestStepQueue) -> App {
 fn send_step_from_queue(world: &mut World) {
     if world.resource::<UnfinishedSteps>().0 == 0 {
         if let Some(step) = world.resource_mut::<TestStepQueue>().steps.pop_front() {
-            world.resource_mut::<UnfinishedSteps>().0 += 1;
+            world.resource_mut::<UnfinishedSteps>().add_one();
             step.send(world);
             println!("Sent step from queue.",);
         } else {
@@ -62,11 +62,11 @@ fn send_step_from_queue(world: &mut World) {
 }
 
 fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.complete_step();
+    unfinished_steps.sub_one();
     println!("StartGameStep completed.");
 }
 
 fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.complete_step();
+    unfinished_steps.sub_one();
     println!("QuitGameStep completed.");
 }

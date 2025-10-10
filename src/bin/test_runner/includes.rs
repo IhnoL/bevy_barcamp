@@ -17,7 +17,11 @@ pub(crate) use step;
 pub struct UnfinishedSteps(pub usize);
 
 impl UnfinishedSteps {
-    pub fn complete_step(&mut self) {
+    pub fn sub_one(&mut self) {
         self.0 = self.0.saturating_sub(1);
+    }
+
+    pub fn add_one(&mut self) {
+        self.0 = self.0.saturating_add(1);
     }
 }

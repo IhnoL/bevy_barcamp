@@ -13,11 +13,11 @@ use syn::{
 };
 
 #[derive(Default)]
-struct StepDispatchArgs {
+struct TestStepArgs {
     event_path: Option<Path>,
 }
 
-impl Parse for StepDispatchArgs {
+impl Parse for TestStepArgs {
     fn parse(input: syn::parse::ParseStream) -> Result<Self> {
         let ident: Ident = input.parse()?;
         if ident != "event" {
@@ -34,7 +34,7 @@ impl Parse for StepDispatchArgs {
     }
 }
 
-#[proc_macro_derive(StepDispatch, attributes(step_dispatch))]
+#[proc_macro_derive(TestStep, attributes(step_dispatch))]
 pub fn derive_step_dispatch(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -50,7 +50,7 @@ fn expand_step_dispatch(input: DeriveInput) -> Result<proc_macro2::TokenStream> 
 
     let mut event_path: Option<Path> = None;
     for attr in input.attrs.iter().filter(|attr| attr.path().is_ident("step_dispatch")) {
-        let args: StepDispatchArgs = attr.parse_args()?;
+        let args: TestStepArgs = attr.parse_args()?;
         if event_path.is_some() {
             return Err(syn::Error::new(
                 attr.span(),
