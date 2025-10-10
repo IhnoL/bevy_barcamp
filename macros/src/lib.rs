@@ -6,6 +6,7 @@ use syn::{
     parse_quote,
     spanned::Spanned,
     DeriveInput,
+    Expr,
     Ident,
     Path,
     Result,
@@ -92,4 +93,10 @@ fn expand_step_dispatch(input: DeriveInput) -> Result<proc_macro2::TokenStream> 
     };
 
     Ok(output)
+}
+
+#[proc_macro]
+pub fn step(input: TokenStream) -> TokenStream {
+    let expression = parse_macro_input!(input as Expr);
+    quote!(Box::new(#expression) as Box<dyn TestStep>).into()
 }

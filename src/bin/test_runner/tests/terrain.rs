@@ -4,7 +4,8 @@ use bevy_barcamp::game::{
 };
 
 use crate::events::VerifyTerrainSpawned;
-use crate::includes::{step, *};
+use crate::includes::*;
+use macros::step;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![step!(VerifyTerrainSpawned)]

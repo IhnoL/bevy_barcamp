@@ -5,13 +5,6 @@ pub trait TestStep: Send + Sync + 'static {
     fn send(&self, world: &mut World);
 }
 
-macro_rules! step {
-    ($step:expr) => {
-        Box::new($step) as Box<dyn TestStep>
-    };
-}
-
-pub(crate) use step;
 
 #[derive(Default, Resource)]
 pub struct UnfinishedSteps(pub usize);

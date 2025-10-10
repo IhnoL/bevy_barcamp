@@ -1,5 +1,6 @@
 use crate::events::{CapturePlayerPosition, TriggerMovePlayer, VerifyPlayerMoved};
-use crate::includes::{step, *};
+use crate::includes::*;
+use macros::step;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     let mut steps: Vec<Box<dyn TestStep>> = Vec::with_capacity(6);
