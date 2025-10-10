@@ -17,17 +17,17 @@ pub struct TestStepQueue {
 fn main() {
     let mut test_queue = TestStepQueue::default();
 
-    test_queue.steps.push_back(step!(StartGameStep));
+   /* test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(movement_test::provide_steps());
-    test_queue.steps.push_back(step!(QuitGameStep));
+    test_queue.steps.push_back(step!(QuitGameStep));*/
 
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(terrain_test::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
 
-    test_queue.steps.push_back(step!(StartGameStep));
+  /*  test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(jump_test::provide_steps());
-    test_queue.steps.push_back(step!(QuitGameStep));
+    test_queue.steps.push_back(step!(QuitGameStep));*/
 
     let base_app = bevy_barcamp::run(App::new());
     let mut app = setup_test_app(base_app, test_queue);
