@@ -25,11 +25,11 @@ impl Plugin for GameControllerPlugin {
 }
 
 fn handle_start_game(_start: On<StartGame>, mut target: ResMut<TargetState>) {
-    target.set(GameState::Running);
+    target.state = Some(GameState::Running);
 }
 
 fn handle_quit_game(_quit: On<QuitGame>, mut target: ResMut<TargetState>) {
-    target.set(GameState::Uninitialized);
+    target.state = Some(GameState::Uninitialized);
 }
 
 fn advance_state(
@@ -38,21 +38,21 @@ fn advance_state(
     transitions: Res<UnfinishedStateTransitions>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
-    let Some(target_state) = target_state_res.get() else {
+    let Some(target_state) = target_state_res.state else {
         return;
     };
 
     let current_state = *state.get();
     if current_state == target_state {
-        target_state_res.clear();
+        target_state_res.state = None;
         return;
     }
 
-    if transitions.is_empty() {
+    if transitions.count() == 0 {
         next_state.set(current_state.next());
     }
 }
 
 fn target_state_requested(target: Res<TargetState>) -> bool {
-    target.is_set()
+    target.state.is_some()
 }

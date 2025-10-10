@@ -1,0 +1,20 @@
+flowchart TD
+    StartGame["StartGame Event"]
+    QuitGame["QuitGame Event"]
+    SetRunning["TargetState = Running"]
+    SetUninitialized["TargetState = Uninitialized"]
+    Advance["advance_state()"]
+    CurrentEqTarget{"current_state == target_state?"}
+    ClearTarget["TargetState.target = None"]
+    TransitionsEmpty{"UnfinishedStateTransitions == 0?"}
+    StepNext["next_state.set(current_state.next())"]
+    IncreaseUnfinished["UnfinishedStateTransitions ++"]
+
+    StartGame --> SetRunning --> Advance
+    QuitGame --> SetUninitialized --> Advance
+    CurrentEqTarget --> Advance
+
+    Advance --> CurrentEqTarget --> ClearTarget
+    CurrentEqTarget -- No --> TransitionsEmpty
+    TransitionsEmpty -- Yes --> StepNext --> IncreaseUnfinished
+

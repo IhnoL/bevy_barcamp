@@ -6,3 +6,5 @@ Based on the existing src/bin/test_runner/terrain_test.rs: Implement a terrain
 ▌ game logic!
 
 ▌ Create a minimum camera.                   
+
+Add some global illumination to the camera module. I want to see the terrain.

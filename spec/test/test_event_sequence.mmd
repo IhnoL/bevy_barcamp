@@ -1,8 +1,8 @@
 flowchart TD
     Run["run_tests()"]
     Start["add start game step"]
-    AddMovement["add test steps by calling provide_steps()"]
-    Quit["add quit game step to queue"]
+    AddMovement["add movement_test calling provide_steps()"]
+    Quit["add quit game step"]
     Repeat[".. repeat above for each test .."]
     UnfinishedSteps{"UnfinishedSteps == 0 ?"}
     Send["send_step_from_queue()"]
@@ -12,7 +12,7 @@ flowchart TD
     ExecuteStep["execute_step()"]
     UnfinishedSteps{"Steps  waiting ?"}
 
-    Run --> Quit --> Start --> AddMovement --> Repeat --> Update
+    Run -->  Start --> AddMovement --> Quit --> Repeat --> Update
     Update --> UnfinishedSteps
     Update --> UnfinishedSteps -- Yes--> ExecuteStep --> DecreaseUnfinished
 

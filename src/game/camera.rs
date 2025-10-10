@@ -1,10 +1,7 @@
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
 
-use super::{
-    resources::UnfinishedStateTransitions,
-    state::GameState,
-};
+use super::{resources::UnfinishedStateTransitions, state::GameState};
 
 const CAMERA_Z: f32 = 1000.0;
 
@@ -31,6 +28,12 @@ pub fn spawn(
     }
 
     transitions.add_one();
+
+    commands.insert_resource(AmbientLight {
+        color: Color::srgb(1.0, 0.98, 0.92).into(),
+        brightness: 2.0,
+        affects_lightmapped_meshes: true,
+    });
 
     commands.spawn((
         Name::new("GameCamera"),
@@ -64,6 +67,8 @@ pub fn despawn(
     for entity in cameras.iter() {
         commands.entity(entity).despawn();
     }
+
+    commands.remove_resource::<AmbientLight>();
 
     transitions.sub_one();
 }
