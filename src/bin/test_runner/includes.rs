@@ -5,7 +5,6 @@ pub trait TestStep: Send + Sync + 'static {
     fn send(&self, world: &mut World);
 }
 
-
 #[derive(Default, Resource)]
 pub struct UnfinishedSteps(pub usize);
 
