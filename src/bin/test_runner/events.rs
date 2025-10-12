@@ -18,7 +18,7 @@ pub struct WaitStep;
 pub struct CapturePlayerPosition;
 
 #[derive(Clone, Event, Message, TestStep)]
-pub struct TriggerMovePlayer {
+pub struct TriggerPlayerMove {
     pub direction: Direction,
 }
 

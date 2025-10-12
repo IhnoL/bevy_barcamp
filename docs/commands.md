@@ -13,3 +13,7 @@ Check the player in [image 683x384 PNG] and check the documents and diagrams in 
 ▌ spec directory (not test). I want you to create the player according to the spec.
 ▌ Also create a test in the style of the src/bin/test_runner/tests/terrain.rs terrain
 ▌ test which checks if the player actually exists in the world.
+
+▌ Add the movement logic according to the specs. Make sure the existing src/bin/
+▌ test_runner/tests/movement.rs succeeds in the end. Currently its only mocked, so it
+▌ has to be implemented ;)

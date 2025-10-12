@@ -1,12 +1,13 @@
 use bevy::prelude::*;
 
-use crate::game::includes::events::PlayerMove;
+use crate::game::includes::events::{Direction, PlayerMove};
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 
 const PLAYER_ROOT_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
+const PLAYER_MOVE_SPEED: f32 = 320.0;
 
 #[derive(Clone, Copy)]
 struct BodyPartSpec {
@@ -62,7 +63,11 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::Running), spawn)
             .add_systems(OnEnter(GameState::Quitting), despawn)
-            .add_systems(Update, on_move);
+            .add_systems(
+                Update,
+                apply_player_movement.run_if(in_state(GameState::Running)),
+            )
+            .add_observer(on_move);
     }
 }
 
@@ -75,6 +80,33 @@ pub struct PlayerRoot;
 #[derive(Component, Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct PlayerBodyPart {
     pub kind: BodyPart,
+}
+
+#[derive(Component, Debug)]
+struct PlayerMovement {
+    left_active: bool,
+    right_active: bool,
+    speed: f32,
+}
+
+impl Default for PlayerMovement {
+    fn default() -> Self {
+        Self {
+            left_active: false,
+            right_active: false,
+            speed: PLAYER_MOVE_SPEED,
+        }
+    }
+}
+
+impl PlayerMovement {
+    fn direction(&self) -> f32 {
+        match (self.left_active, self.right_active) {
+            (true, false) => -1.0,
+            (false, true) => 1.0,
+            _ => 0.0,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -93,6 +125,7 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
     let mut root = commands.spawn((
         Player,
         PlayerRoot,
+        PlayerMovement::default(),
         Transform::from_translation(PLAYER_ROOT_POSITION),
         GlobalTransform::default(),
     ));
@@ -138,12 +171,42 @@ fn despawn(
     transitions.sub_one();
 }
 
-fn on_move(events: Option<MessageReader<PlayerMove>>, state: Res<State<GameState>>) {
+fn on_move(
+    move_event: On<PlayerMove>,
+    mut movement_query: Query<&mut PlayerMovement>,
+    state: Res<State<GameState>>,
+) {
     if *state.get() != GameState::Running {
         return;
     }
 
-    if let Some(mut reader) = events {
-        for _ in reader.read() {}
+    let mut movement = match movement_query.iter_mut().next() {
+        Some(movement) => movement,
+        None => return,
+    };
+
+    match move_event.direction {
+        Direction::Left => movement.left_active = move_event.active,
+        Direction::Right => movement.right_active = move_event.active,
+    }
+}
+
+fn apply_player_movement(
+    time: Res<Time>,
+    mut query: Query<(&mut Transform, &PlayerMovement), With<PlayerRoot>>,
+) {
+    let mut iter = query.iter_mut();
+    let Some((mut transform, movement)) = iter.next() else {
+        return;
+    };
+
+    let direction = movement.direction();
+    if direction == 0.0 {
+        return;
+    }
+
+    let displacement = direction * movement.speed * time.delta_secs();
+    if displacement.abs() > f32::EPSILON {
+        transform.translation.x += displacement;
     }
 }

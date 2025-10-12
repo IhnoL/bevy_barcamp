@@ -1,10 +1,39 @@
+use bevy::input::ButtonInput;
+use bevy::input::keyboard::KeyCode;
 use bevy::prelude::*;
+
+use crate::game::includes::events::{Direction, PlayerMove};
+use crate::game::includes::state::GameState;
 
 #[derive(Default)]
 pub struct InteractionPlugin;
 
 impl Plugin for InteractionPlugin {
-    fn build(&self, _app: &mut App) {}
+    fn build(&self, app: &mut App) {
+        app.add_systems(
+            Update,
+            handle_keyboard_input.run_if(in_state(GameState::Running)),
+        );
+    }
 }
 
-pub fn move_player() {}
+fn handle_keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
+    for (key, direction) in [
+        (KeyCode::ArrowLeft, Direction::Left),
+        (KeyCode::ArrowRight, Direction::Right),
+    ] {
+        if keyboard.just_pressed(key) {
+            commands.trigger(PlayerMove {
+                direction,
+                active: true,
+            });
+        }
+
+        if keyboard.just_released(key) {
+            commands.trigger(PlayerMove {
+                direction,
+                active: false,
+            });
+        }
+    }
+}

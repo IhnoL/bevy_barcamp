@@ -10,6 +10,7 @@ use std::collections::VecDeque;
 use std::thread::sleep;
 use std::time::Duration;
 use tests::{TestsPlugin, player, terrain};
+use crate::tests::movement;
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -22,6 +23,7 @@ fn main() {
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(terrain::provide_steps());
     test_queue.steps.extend(player::provide_steps());
+    test_queue.steps.extend(movement::provide_steps());
     test_queue.steps.push_back(step!(WaitStep));
     test_queue.steps.push_back(step!(QuitGameStep));
 
