@@ -15,7 +15,7 @@ pub fn handle_verify_player_spawned(
     _verify_event: On<VerifyPlayerSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     state: Res<State<GameState>>,
-    root_query: Query<(Entity, &Name), (With<Player>, With<PlayerRoot>)>,
+    root_query: Query<Entity, (With<Player>, With<PlayerRoot>)>,
     children_query: Query<&Children>,
     body_part_query: Query<(&PlayerBodyPart, &ChildOf)>,
 ) {
@@ -25,10 +25,14 @@ pub fn handle_verify_player_spawned(
         panic!("Player verification ran outside of GameState::Running");
     }
 
-    let (root_entity, _name) = root_query
-        .iter()
-        .find(|(_, name)| name.as_str() == "Player")
-        .unwrap_or_else(|| panic!("Player root entity with name 'Player' not found"));
+    let mut root_iter = root_query.iter();
+    let root_entity = root_iter
+        .next()
+        .unwrap_or_else(|| panic!("Player root entity with required components not found"));
+    assert!(
+        root_iter.next().is_none(),
+        "Multiple Player root entities found"
+    );
 
     let children = children_query
         .get(root_entity)

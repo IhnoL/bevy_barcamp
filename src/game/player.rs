@@ -87,32 +87,13 @@ pub enum BodyPart {
     LegRight,
 }
 
-impl BodyPart {
-    pub const fn label(self) -> &'static str {
-        match self {
-            BodyPart::Head => "Head",
-            BodyPart::Torso => "Torso",
-            BodyPart::ArmLeft => "ArmLeft",
-            BodyPart::ArmRight => "ArmRight",
-            BodyPart::LegLeft => "LegLeft",
-            BodyPart::LegRight => "LegRight",
-        }
-    }
-}
-
-pub fn spawn(
+ fn spawn(
     mut commands: Commands,
-    existing: Query<(), With<Player>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if !existing.is_empty() {
-        return;
-    }
-
     transitions.add_one();
 
     let mut root = commands.spawn((
-        Name::new("Player"),
         Player,
         PlayerRoot,
         Transform::from_translation(PLAYER_ROOT_POSITION),
@@ -122,7 +103,6 @@ pub fn spawn(
     root.with_children(|parent| {
         for spec in BODY_PART_SPECS {
             parent.spawn((
-                Name::new(format!("Player{}", spec.kind.label())),
                 PlayerBodyPart { kind: spec.kind },
                 Sprite::from_color(PLAYER_COLOR, spec.size),
                 Transform {
@@ -138,7 +118,7 @@ pub fn spawn(
     transitions.sub_one();
 }
 
-pub fn despawn(
+ fn despawn(
     mut commands: Commands,
     roots: Query<Entity, With<PlayerRoot>>,
     parts: Query<Entity, With<PlayerBodyPart>>,
@@ -161,7 +141,7 @@ pub fn despawn(
     transitions.sub_one();
 }
 
-pub fn on_move(events: Option<MessageReader<PlayerMove>>, state: Res<State<GameState>>) {
+ fn on_move(events: Option<MessageReader<PlayerMove>>, state: Res<State<GameState>>) {
     if *state.get() != GameState::Running {
         return;
     }
