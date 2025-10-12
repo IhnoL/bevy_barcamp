@@ -1,11 +1,11 @@
-use crate::events::{CapturePlayerPosition, TriggerPlayerMove, VerifyPlayerMoved};
+use crate::events::{CapturePlayerPosition, TriggerPlayerMove, VerifyPlayerMoved, WaitStep};
 use crate::includes::*;
 use bevy_barcamp::game::includes::events::{Direction, PlayerMove};
 use bevy_barcamp::game::includes::state::GameState;
 use bevy_barcamp::game::player::PlayerRoot;
 use macros::step;
 
-const MIN_MOVEMENT_DELTA: f32 = 0.25;
+const MIN_MOVEMENT_DELTA: f32 = 50.0;
 
 #[derive(Default, Resource, Debug)]
 pub struct PlayerPositionTracker {
@@ -18,6 +18,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
         step!(TriggerPlayerMove {
             direction: Direction::Right,
         }),
+        step!(WaitStep { updates: 12 }),
         step!(VerifyPlayerMoved {
             expected_direction: Direction::Right,
         }),
@@ -25,6 +26,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
         step!(TriggerPlayerMove {
             direction: Direction::Left,
         }),
+        step!(WaitStep { updates: 12 }),
         step!(VerifyPlayerMoved {
             expected_direction: Direction::Left,
         }),

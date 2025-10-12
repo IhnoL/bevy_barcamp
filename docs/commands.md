@@ -17,3 +17,8 @@ Check the player in [image 683x384 PNG] and check the documents and diagrams in 
 ▌ Add the movement logic according to the specs. Make sure the existing src/bin/
 ▌ test_runner/tests/movement.rs succeeds in the end. Currently its only mocked, so it
 ▌ has to be implemented ;)
+
+▌ Increase the MIN_MOVEMENT_DELTA to 50. Then add a wait step between the triggering
+▌ of the movement event and the verify so that the player has some time to move. The
+▌ wait step probably needs to be changed so that it does not sleep but instead waits
+▌ a certain amount of update cycles to not block the thread.

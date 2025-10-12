@@ -16,3 +16,8 @@ impl UnfinishedSteps {
         self.0 = self.0.saturating_add(1);
     }
 }
+
+#[derive(Default, Resource)]
+pub struct PendingWaitStep {
+    pub wait_cycles: Option<usize>,
+}

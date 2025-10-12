@@ -11,8 +11,10 @@ pub struct StartGameStep;
 #[step_dispatch(event = QuitGame)]
 pub struct QuitGameStep;
 
-#[derive(Clone, Event, Message, TestStep)]
-pub struct WaitStep;
+#[derive(Clone, Event, TestStep)]
+pub struct WaitStep {
+    pub updates: usize,
+}
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct CapturePlayerPosition;
