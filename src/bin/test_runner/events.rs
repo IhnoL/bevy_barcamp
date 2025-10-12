@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_barcamp::game::events::{Direction, QuitGame, StartGame};
+use bevy_barcamp::game::includes::events::{Direction, QuitGame, StartGame};
 
 use macros::TestStep;
 
@@ -26,3 +26,6 @@ pub struct VerifyPlayerMoved {
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct VerifyTerrainSpawned;
+
+#[derive(Clone, Event, Message, TestStep)]
+pub struct VerifyPlayerSpawned;

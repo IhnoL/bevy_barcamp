@@ -8,3 +8,8 @@ Based on the existing src/bin/test_runner/terrain_test.rs: Implement a terrain
 ▌ Create a minimum camera.                   
 
 Add some global illumination to the camera module. I want to see the terrain.
+
+Check the player in [image 683x384 PNG] and check the documents and diagrams in the
+▌ spec directory (not test). I want you to create the player according to the spec.
+▌ Also create a test in the style of the src/bin/test_runner/tests/terrain.rs terrain
+▌ test which checks if the player actually exists in the world.

@@ -24,7 +24,7 @@ pub struct TerrainPiece;
 impl Plugin for TerrainPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::Running), spawn)
-            .add_systems(OnExit(GameState::Running), despawn);
+            .add_systems(OnEnter(GameState::Quitting), despawn);
     }
 }
 
