@@ -1,7 +1,7 @@
 use bevy::prelude::Resource;
 use derive_getters::Getters;
 
-use super::state::GameState;
+use crate::game::includes::state::GameState;
 
 #[derive(Default, Resource, Getters)]
 pub struct UnfinishedStateTransitions {

@@ -1,8 +1,7 @@
+use crate::game::includes::resources::UnfinishedStateTransitions;
+use crate::game::includes::state::GameState;
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
-
-use super::{resources::UnfinishedStateTransitions, state::GameState};
-
 const CAMERA_Z: f32 = 1000.0;
 
 #[derive(Default)]

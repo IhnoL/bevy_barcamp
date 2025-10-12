@@ -1,14 +1,11 @@
-use bevy::prelude::*;
-
 use super::{
-    camera::CameraPlugin,
-    events::{QuitGame, StartGame},
-    interaction::InteractionPlugin,
-    player::PlayerPlugin,
-    resources::{TargetState, UnfinishedStateTransitions},
-    state::GameState,
+    camera::CameraPlugin, interaction::InteractionPlugin, player::PlayerPlugin,
     terrain::TerrainPlugin,
 };
+use crate::game::includes::events::{QuitGame, StartGame};
+use crate::game::includes::resources::{TargetState, UnfinishedStateTransitions};
+use crate::game::includes::state::GameState;
+use bevy::prelude::*;
 
 #[derive(Default)]
 pub struct GameControllerPlugin;

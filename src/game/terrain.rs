@@ -1,7 +1,6 @@
+use crate::game::includes::resources::UnfinishedStateTransitions;
+use crate::game::includes::state::GameState;
 use bevy::prelude::*;
-
-use super::{resources::UnfinishedStateTransitions, state::GameState};
-
 const GROUND_SIZE: Vec2 = Vec2::new(800.0, 40.0);
 const GROUND_Y: f32 = -360.0;
 const PLATFORM_SIZE: Vec2 = Vec2::new(140.0, 20.0);

@@ -2,12 +2,12 @@ mod events;
 mod includes;
 mod tests;
 use bevy::prelude::*;
-use bevy_barcamp::game::state::GameState;
+use bevy_barcamp::game::includes::state::GameState;
 use events::{QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
-use tests::{TestsPlugin, terrain};
+use tests::{TestsPlugin, player, terrain};
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -25,6 +25,7 @@ fn main() {
 
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(terrain::provide_steps());
+    test_queue.steps.extend(player::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
 
     /*  test_queue.steps.push_back(step!(StartGameStep));

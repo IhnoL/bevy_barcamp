@@ -1,5 +1,4 @@
 pub use bevy::prelude::*;
-pub use bevy_barcamp::game::events::Direction;
 
 pub trait TestStep: Send + Sync + 'static {
     fn send(&self, world: &mut World);
