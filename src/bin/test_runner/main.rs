@@ -3,10 +3,12 @@ mod includes;
 mod tests;
 use bevy::prelude::*;
 use bevy_barcamp::game::includes::state::GameState;
-use events::{QuitGameStep, StartGameStep};
+use events::{QuitGameStep, StartGameStep, WaitStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
+use std::thread::sleep;
+use std::time::Duration;
 use tests::{TestsPlugin, player, terrain};
 
 #[derive(Default, Resource)]
@@ -17,20 +19,11 @@ pub struct TestStepQueue {
 fn main() {
     let mut test_queue = TestStepQueue::default();
 
-    /* test_queue.steps.push_back(step!(StartGameStep));
-    test_queue
-        .steps
-        .extend(tests::movement::provide_steps());
-    test_queue.steps.push_back(step!(QuitGameStep));*/
-
     test_queue.steps.push_back(step!(StartGameStep));
     test_queue.steps.extend(terrain::provide_steps());
     test_queue.steps.extend(player::provide_steps());
+    test_queue.steps.push_back(step!(WaitStep));
     test_queue.steps.push_back(step!(QuitGameStep));
-
-    /*  test_queue.steps.push_back(step!(StartGameStep));
-    test_queue.steps.extend(tests::jump::provide_steps());
-    test_queue.steps.push_back(step!(QuitGameStep));*/
 
     let base_app = bevy_barcamp::run(App::new());
     let mut app = setup_test_app(base_app, test_queue);
@@ -43,6 +36,7 @@ fn setup_test_app(mut app: App, test_queue: TestStepQueue) -> App {
         .add_systems(Update, send_step_from_queue)
         .add_systems(OnEnter(GameState::Running), handle_start_game)
         .add_systems(OnEnter(GameState::Uninitialized), handle_quit_game)
+        .add_observer(handle_wait_step)
         .add_plugins(TestsPlugin);
     app
 }
@@ -68,6 +62,12 @@ fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
 fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
     unfinished_steps.sub_one();
     println!("QuitGameStep completed.");
+}
+
+fn handle_wait_step(_wait_step: On<WaitStep>, mut unfinished_steps: ResMut<UnfinishedSteps>) {
+    sleep(Duration::from_secs(1));
+    unfinished_steps.sub_one();
+    println!("WaitStep completed after 1 second.");
 }
 
 #[cfg(test)]

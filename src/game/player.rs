@@ -87,10 +87,7 @@ pub enum BodyPart {
     LegRight,
 }
 
- fn spawn(
-    mut commands: Commands,
-    mut transitions: ResMut<UnfinishedStateTransitions>,
-) {
+fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransitions>) {
     transitions.add_one();
 
     let mut root = commands.spawn((
@@ -118,7 +115,7 @@ pub enum BodyPart {
     transitions.sub_one();
 }
 
- fn despawn(
+fn despawn(
     mut commands: Commands,
     roots: Query<Entity, With<PlayerRoot>>,
     parts: Query<Entity, With<PlayerBodyPart>>,
@@ -141,7 +138,7 @@ pub enum BodyPart {
     transitions.sub_one();
 }
 
- fn on_move(events: Option<MessageReader<PlayerMove>>, state: Res<State<GameState>>) {
+fn on_move(events: Option<MessageReader<PlayerMove>>, state: Res<State<GameState>>) {
     if *state.get() != GameState::Running {
         return;
     }

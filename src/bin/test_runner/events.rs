@@ -12,6 +12,9 @@ pub struct StartGameStep;
 pub struct QuitGameStep;
 
 #[derive(Clone, Event, Message, TestStep)]
+pub struct WaitStep;
+
+#[derive(Clone, Event, Message, TestStep)]
 pub struct CapturePlayerPosition;
 
 #[derive(Clone, Event, Message, TestStep)]
