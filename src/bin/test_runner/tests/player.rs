@@ -58,8 +58,10 @@ pub fn handle_verify_player_spawned(
     let expected_parts = [
         BodyPart::Head,
         BodyPart::Torso,
-        BodyPart::Arms,
-        BodyPart::Legs,
+        BodyPart::ArmLeft,
+        BodyPart::ArmRight,
+        BodyPart::LegLeft,
+        BodyPart::LegRight,
     ];
     for expected in expected_parts.iter() {
         assert!(

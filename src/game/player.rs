@@ -6,13 +6,54 @@ use crate::game::includes::state::GameState;
 
 const PLAYER_ROOT_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
-const HEAD_SIZE: Vec2 = Vec2::new(42.0, 4.0);
-const TORSO_SIZE: Vec2 = Vec2::new(4.0, 64.0);
-const ARMS_SIZE: Vec2 = Vec2::new(70.0, 4.0);
-const LEGS_SIZE: Vec2 = Vec2::new(4.0, 60.0);
-const HEAD_OFFSET_Y: f32 = 54.0;
-const ARMS_OFFSET_Y: f32 = 20.0;
-const LEGS_OFFSET_Y: f32 = -40.0;
+const PLAYER_Z_OFFSET: f32 = 0.1;
+
+#[derive(Clone, Copy)]
+struct BodyPartSpec {
+    kind: BodyPart,
+    offset: Vec3,
+    size: Vec2,
+    rotation_radians: f32,
+}
+
+const BODY_PART_SPECS: [BodyPartSpec; 6] = [
+    BodyPartSpec {
+        kind: BodyPart::Head,
+        offset: Vec3::new(0.0, 54.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(36.0, 4.0),
+        rotation_radians: 0.0,
+    },
+    BodyPartSpec {
+        kind: BodyPart::Torso,
+        offset: Vec3::new(0.0, 18.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(4.0, 64.0),
+        rotation_radians: 0.0,
+    },
+    BodyPartSpec {
+        kind: BodyPart::ArmLeft,
+        offset: Vec3::new(-26.0, 24.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(52.0, 4.0),
+        rotation_radians: std::f32::consts::FRAC_PI_4,
+    },
+    BodyPartSpec {
+        kind: BodyPart::ArmRight,
+        offset: Vec3::new(26.0, 24.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(52.0, 4.0),
+        rotation_radians: -std::f32::consts::FRAC_PI_4,
+    },
+    BodyPartSpec {
+        kind: BodyPart::LegLeft,
+        offset: Vec3::new(-16.0, -42.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(56.0, 4.0),
+        rotation_radians: std::f32::consts::FRAC_PI_6,
+    },
+    BodyPartSpec {
+        kind: BodyPart::LegRight,
+        offset: Vec3::new(16.0, -42.0, PLAYER_Z_OFFSET),
+        size: Vec2::new(56.0, 4.0),
+        rotation_radians: -std::f32::consts::FRAC_PI_6,
+    },
+];
 
 #[derive(Default)]
 pub struct PlayerPlugin;
@@ -40,8 +81,10 @@ pub struct PlayerBodyPart {
 pub enum BodyPart {
     Head,
     Torso,
-    Arms,
-    Legs,
+    ArmLeft,
+    ArmRight,
+    LegLeft,
+    LegRight,
 }
 
 impl BodyPart {
@@ -49,8 +92,10 @@ impl BodyPart {
         match self {
             BodyPart::Head => "Head",
             BodyPart::Torso => "Torso",
-            BodyPart::Arms => "Arms",
-            BodyPart::Legs => "Legs",
+            BodyPart::ArmLeft => "ArmLeft",
+            BodyPart::ArmRight => "ArmRight",
+            BodyPart::LegLeft => "LegLeft",
+            BodyPart::LegRight => "LegRight",
         }
     }
 }
@@ -75,58 +120,19 @@ pub fn spawn(
     ));
 
     root.with_children(|parent| {
-        parent.spawn((
-            Name::new(format!("Player{}", BodyPart::Head.label())),
-            PlayerBodyPart {
-                kind: BodyPart::Head,
-            },
-            Sprite::from_color(PLAYER_COLOR, HEAD_SIZE),
-            Transform {
-                translation: Vec3::new(0.0, HEAD_OFFSET_Y, 0.1),
-                ..Default::default()
-            },
-            GlobalTransform::default(),
-        ));
-
-        parent.spawn((
-            Name::new(format!("Player{}", BodyPart::Torso.label())),
-            PlayerBodyPart {
-                kind: BodyPart::Torso,
-            },
-            Sprite::from_color(PLAYER_COLOR, TORSO_SIZE),
-            Transform {
-                translation: Vec3::new(0.0, 0.0, 0.1),
-                ..Default::default()
-            },
-            GlobalTransform::default(),
-        ));
-
-        parent.spawn((
-            Name::new(format!("Player{}", BodyPart::Arms.label())),
-            PlayerBodyPart {
-                kind: BodyPart::Arms,
-            },
-            Sprite::from_color(PLAYER_COLOR, ARMS_SIZE),
-            Transform {
-                translation: Vec3::new(0.0, ARMS_OFFSET_Y, 0.1),
-                ..Default::default()
-            },
-            GlobalTransform::default(),
-        ));
-
-        parent.spawn((
-            Name::new(format!("Player{}", BodyPart::Legs.label())),
-            PlayerBodyPart {
-                kind: BodyPart::Legs,
-            },
-            Sprite::from_color(PLAYER_COLOR, LEGS_SIZE),
-            Transform {
-                translation: Vec3::new(0.0, LEGS_OFFSET_Y, 0.1),
-                rotation: Quat::from_rotation_z(0.25 * std::f32::consts::PI),
-                ..Default::default()
-            },
-            GlobalTransform::default(),
-        ));
+        for spec in BODY_PART_SPECS {
+            parent.spawn((
+                Name::new(format!("Player{}", spec.kind.label())),
+                PlayerBodyPart { kind: spec.kind },
+                Sprite::from_color(PLAYER_COLOR, spec.size),
+                Transform {
+                    translation: spec.offset,
+                    rotation: Quat::from_rotation_z(spec.rotation_radians),
+                    ..Default::default()
+                },
+                GlobalTransform::default(),
+            ));
+        }
     });
 
     transitions.sub_one();
