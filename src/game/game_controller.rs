@@ -1,5 +1,5 @@
 use super::{
-    camera::CameraPlugin, interaction::InteractionPlugin, player::PlayerPlugin,
+    camera::CameraPlugin, interaction::InteractionPlugin, mob::MobPlugin, player::PlayerPlugin,
     terrain::TerrainPlugin,
 };
 use crate::game::includes::events::{QuitGame, StartGame};
@@ -14,7 +14,13 @@ impl Plugin for GameControllerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UnfinishedStateTransitions>()
             .init_resource::<TargetState>()
-            .add_plugins((TerrainPlugin, CameraPlugin, PlayerPlugin, InteractionPlugin))
+            .add_plugins((
+                TerrainPlugin,
+                CameraPlugin,
+                PlayerPlugin,
+                MobPlugin,
+                InteractionPlugin,
+            ))
             .add_systems(Update, advance_state.run_if(target_state_requested))
             .add_observer(handle_start_game)
             .add_observer(handle_quit_game);

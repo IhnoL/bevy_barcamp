@@ -34,3 +34,6 @@ pub struct VerifyTerrainSpawned;
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct VerifyPlayerSpawned;
+
+#[derive(Clone, Event, Message, TestStep)]
+pub struct VerifyMobSpawned;

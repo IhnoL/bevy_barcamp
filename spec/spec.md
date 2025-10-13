@@ -11,7 +11,7 @@
 
 ## Interaction(Plugin)
 - all interactions trigger bevy .17 events and not messages
-- movement should be triggered by left and right arrows
+- movement should be triggered by WASD 
 
 ## Terrain(Plugin)
 
