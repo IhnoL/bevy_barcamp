@@ -17,3 +17,12 @@ pub enum Direction {
     Left,
     Right,
 }
+
+impl From<Direction> for f32 {
+    fn from(direction: Direction) -> Self {
+        match direction {
+            Direction::Left => -1.0,
+            Direction::Right => 1.0,
+        }
+    }
+}

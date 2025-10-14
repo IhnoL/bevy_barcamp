@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use bevy_barcamp::game::includes::state::GameState;
-use bevy_barcamp::game::player::{BodyPart, Player, PlayerBodyPart, PlayerRoot};
+use bevy_barcamp::game::player::{BodyPart, Player, PlayerBodyPart};
 
 use crate::events::VerifyPlayerSpawned;
 use crate::includes::*;
@@ -15,7 +15,7 @@ pub fn handle_verify_player_spawned(
     _verify_event: On<VerifyPlayerSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     state: Res<State<GameState>>,
-    root_query: Query<Entity, (With<Player>, With<PlayerRoot>)>,
+    root_query: Query<Entity, With<Player>>,
     children_query: Query<&Children>,
     body_part_query: Query<(&PlayerBodyPart, &ChildOf)>,
 ) {

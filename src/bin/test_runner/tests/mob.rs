@@ -1,5 +1,5 @@
 use bevy_barcamp::game::includes::state::GameState;
-use bevy_barcamp::game::mob::{Mob, MobBody, MobLeg, MobRoot};
+use bevy_barcamp::game::mob::{Mob, MobBodyPart, MobPart};
 
 use crate::events::VerifyMobSpawned;
 use crate::includes::*;
@@ -13,9 +13,8 @@ pub fn handle_verify_mob_spawned(
     _verify_event: On<VerifyMobSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     state: Res<State<GameState>>,
-    root_query: Query<(Entity, &Children), (With<MobRoot>, With<Mob>)>,
-    body_query: Query<(), With<MobBody>>,
-    leg_query: Query<&MobLeg>,
+    root_query: Query<(Entity, &Children), With<Mob>>,
+    part_query: Query<(&MobBodyPart, &ChildOf)>,
 ) {
     println!("Handling VerifyMobSpawned");
 
@@ -24,7 +23,7 @@ pub fn handle_verify_mob_spawned(
     }
 
     let mut root_iter = root_query.iter();
-    let (_root_entity, children) = root_iter
+    let (root_entity, children) = root_iter
         .next()
         .unwrap_or_else(|| panic!("Mob root entity with required components not found"));
     assert!(
@@ -37,32 +36,29 @@ pub fn handle_verify_mob_spawned(
         "Mob root exists but does not have any children"
     );
 
-    let mut body_found = false;
-    let mut leg_indices: Vec<usize> = Vec::new();
+    let mut torso_count = 0usize;
+    let mut leg_count = 0usize;
+    let mut attached_part_count = 0usize;
 
-    for child in children.iter() {
-        let entity = child.clone();
-        if body_query.get(entity).is_ok() {
-            body_found = true;
-            continue;
-        }
-
-        if let Ok(leg) = leg_query.get(entity) {
-            leg_indices.push(leg.index);
+    for (part, child_of) in part_query.iter() {
+        if child_of.parent() == root_entity {
+            attached_part_count += 1;
+            match part.kind {
+                MobPart::Torso => torso_count += 1,
+                MobPart::Leg => leg_count += 1,
+            }
         }
     }
 
-    assert!(body_found, "Mob body child not found");
-
     assert_eq!(
-        leg_indices.len(),
-        4,
-        "Expected 4 mob legs but found {}",
-        leg_indices.len()
+        attached_part_count,
+        children.len(),
+        "Mob root children count ({}) does not match number of MobBodyPart attachments ({attached_part_count})",
+        children.len()
     );
 
-    leg_indices.sort_unstable();
-    assert_eq!(leg_indices, [1, 2, 3, 4], "Mob legs missing or out of order: {:?}", leg_indices);
+    assert_eq!(torso_count, 1, "Mob spawned with {torso_count} torsos instead of 1");
+    assert_eq!(leg_count, 4, "Mob spawned with {leg_count} legs instead of 4");
 
     unfinished_steps.sub_one();
     println!("VerifyMobSpawned completed.");

@@ -4,7 +4,7 @@ use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 
 const MOB_TEXTURE_PATH: &str = "textures/mob.png";
-const MOB_ROOT_POSITION: Vec3 = Vec3::new(240.0, -300.0, 0.2);
+const MOB_POSITION: Vec3 = Vec3::new(240.0, -300.0, 0.2);
 const MOB_BODY_OFFSET: Vec3 = Vec3::new(0.0, 32.0, 0.05);
 const MOB_LEG_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const MOB_LEG_Z_OFFSET: f32 = 0.0;
@@ -45,20 +45,20 @@ pub struct MobPlugin;
 #[derive(Component)]
 pub struct Mob;
 
-#[derive(Component)]
-pub struct MobRoot;
+#[derive(Component, Clone, Copy, Debug, Eq, PartialEq, Hash)]
+pub struct MobBodyPart {
+    pub kind: MobPart,
+}
 
-#[derive(Component)]
-pub struct MobBody;
-
-#[derive(Component)]
-pub struct MobLeg {
-    pub index: usize,
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
+pub enum MobPart {
+    Torso,
+    Leg,
 }
 
 impl Plugin for MobPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Running), spawn)
+        app.add_systems(OnEnter(GameState::Initializing), spawn)
             .add_systems(OnEnter(GameState::Quitting), despawn);
     }
 }
@@ -66,7 +66,7 @@ impl Plugin for MobPlugin {
 fn spawn(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    existing: Query<(), With<MobRoot>>,
+    existing: Query<(), With<Mob>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
     if !existing.is_empty() {
@@ -80,15 +80,16 @@ fn spawn(
     let mut root = commands.spawn((
         Name::new("Mob"),
         Mob,
-        MobRoot,
-        Transform::from_translation(MOB_ROOT_POSITION),
+        Transform::from_translation(MOB_POSITION),
         GlobalTransform::default(),
     ));
 
     root.with_children(|parent| {
         parent.spawn((
-            Name::new("MobBody"),
-            MobBody,
+            Name::new("mob-torso"),
+            MobBodyPart {
+                kind: MobPart::Torso,
+            },
             Sprite::from_image(texture.clone()),
             Transform::from_translation(MOB_BODY_OFFSET),
             GlobalTransform::default(),
@@ -96,8 +97,10 @@ fn spawn(
 
         for (index, spec) in MOB_LEG_SPECS.iter().enumerate() {
             parent.spawn((
-                Name::new(format!("MobLeg{}", index + 1)),
-                MobLeg { index: index + 1 },
+                Name::new(format!("mob-leg-{index}")),
+                MobBodyPart {
+                    kind: MobPart::Leg,
+                },
                 Sprite::from_color(MOB_LEG_COLOR, spec.size),
                 Transform {
                     translation: spec.offset,
@@ -114,26 +117,22 @@ fn spawn(
 
 fn despawn(
     mut commands: Commands,
-    roots: Query<Entity, With<MobRoot>>,
-    bodies: Query<Entity, With<MobBody>>,
-    legs: Query<Entity, With<MobLeg>>,
+    roots: Query<(Entity, Option<&Children>), With<Mob>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if roots.is_empty() && legs.is_empty() && bodies.is_empty() {
+    if roots.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for entity in legs.iter() {
-        commands.entity(entity).despawn();
-    }
+    for (entity, children) in roots.iter() {
+        if let Some(children) = children {
+            for child in children.iter() {
+                commands.entity(child).despawn();
+            }
+        }
 
-    for entity in bodies.iter() {
-        commands.entity(entity).despawn();
-    }
-
-    for entity in roots.iter() {
         commands.entity(entity).despawn();
     }
 

@@ -17,6 +17,9 @@ pub struct WaitStep {
 }
 
 #[derive(Clone, Event, Message, TestStep)]
+pub struct CaptureBaselineEntities;
+
+#[derive(Clone, Event, Message, TestStep)]
 pub struct CapturePlayerPosition;
 
 #[derive(Clone, Event, Message, TestStep)]
@@ -37,3 +40,6 @@ pub struct VerifyPlayerSpawned;
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct VerifyMobSpawned;
+
+#[derive(Clone, Event, Message, TestStep)]
+pub struct VerifyEntitiesDespawned;

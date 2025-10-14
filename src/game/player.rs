@@ -4,7 +4,7 @@ use crate::game::includes::events::{Direction, PlayerMove};
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 
-const PLAYER_ROOT_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
+const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
 const PLAYER_MOVE_SPEED: f32 = 320.0;
@@ -61,7 +61,7 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Running), spawn)
+        app.add_systems(OnEnter(GameState::Initializing), spawn)
             .add_systems(OnEnter(GameState::Quitting), despawn)
             .add_systems(
                 Update,
@@ -74,9 +74,6 @@ impl Plugin for PlayerPlugin {
 #[derive(Component)]
 pub struct Player;
 
-#[derive(Component)]
-pub struct PlayerRoot;
-
 #[derive(Component, Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub struct PlayerBodyPart {
     pub kind: BodyPart,
@@ -84,29 +81,7 @@ pub struct PlayerBodyPart {
 
 #[derive(Component, Debug)]
 struct PlayerMovement {
-    left_active: bool,
-    right_active: bool,
-    speed: f32,
-}
-
-impl Default for PlayerMovement {
-    fn default() -> Self {
-        Self {
-            left_active: false,
-            right_active: false,
-            speed: PLAYER_MOVE_SPEED,
-        }
-    }
-}
-
-impl PlayerMovement {
-    fn direction(&self) -> f32 {
-        match (self.left_active, self.right_active) {
-            (true, false) => -1.0,
-            (false, true) => 1.0,
-            _ => 0.0,
-        }
-    }
+    direction: Direction,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -123,16 +98,16 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
     transitions.add_one();
 
     let mut root = commands.spawn((
+        Name::new("Player"),
         Player,
-        PlayerRoot,
-        PlayerMovement::default(),
-        Transform::from_translation(PLAYER_ROOT_POSITION),
+        Transform::from_translation(PLAYER_POSITION),
         GlobalTransform::default(),
     ));
 
     root.with_children(|parent| {
-        for spec in BODY_PART_SPECS {
+        for (index, spec) in BODY_PART_SPECS.iter().enumerate() {
             parent.spawn((
+                Name::new(format!("player-part-{}", index)),
                 PlayerBodyPart { kind: spec.kind },
                 Sprite::from_color(PLAYER_COLOR, spec.size),
                 Transform {
@@ -150,21 +125,22 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
 
 fn despawn(
     mut commands: Commands,
-    roots: Query<Entity, With<PlayerRoot>>,
-    parts: Query<Entity, With<PlayerBodyPart>>,
+    roots: Query<(Entity, Option<&Children>), With<Player>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if roots.is_empty() && parts.is_empty() {
+    if roots.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for entity in parts.iter() {
-        commands.entity(entity).despawn();
-    }
+    for (entity, children) in roots.iter() {
+        if let Some(children) = children {
+            for child in children.iter() {
+                commands.entity(child).despawn();
+            }
+        }
 
-    for entity in roots.iter() {
         commands.entity(entity).despawn();
     }
 
@@ -173,40 +149,28 @@ fn despawn(
 
 fn on_move(
     move_event: On<PlayerMove>,
-    mut movement_query: Query<&mut PlayerMovement>,
-    state: Res<State<GameState>>,
+    mut commands: Commands,
+    player_query: Query<Entity, With<Player>>,
 ) {
-    if *state.get() != GameState::Running {
-        return;
-    }
+    let player_entity = player_query.iter().next().expect("Player must exist");
 
-    let mut movement = match movement_query.iter_mut().next() {
-        Some(movement) => movement,
-        None => return,
-    };
-
-    match move_event.direction {
-        Direction::Left => movement.left_active = move_event.active,
-        Direction::Right => movement.right_active = move_event.active,
+    if move_event.active {
+        commands.entity(player_entity).insert(PlayerMovement {
+            direction: move_event.direction,
+        });
+    } else {
+        commands.entity(player_entity).remove::<PlayerMovement>();
     }
 }
 
 fn apply_player_movement(
     time: Res<Time>,
-    mut query: Query<(&mut Transform, &PlayerMovement), With<PlayerRoot>>,
+    mut player_query: Query<(&mut Transform, &PlayerMovement), With<Player>>,
 ) {
-    let mut iter = query.iter_mut();
-    let Some((mut transform, movement)) = iter.next() else {
+    let Some((mut transform, movement)) = player_query.iter_mut().next() else {
         return;
     };
 
-    let direction = movement.direction();
-    if direction == 0.0 {
-        return;
-    }
-
-    let displacement = direction * movement.speed * time.delta_secs();
-    if displacement.abs() > f32::EPSILON {
-        transform.translation.x += displacement;
-    }
+    let displacement = f32::from(movement.direction) * PLAYER_MOVE_SPEED * time.delta_secs();
+    transform.translation.x += displacement;
 }

@@ -2,7 +2,7 @@ use crate::events::{CapturePlayerPosition, TriggerPlayerMove, VerifyPlayerMoved,
 use crate::includes::*;
 use bevy_barcamp::game::includes::events::{Direction, PlayerMove};
 use bevy_barcamp::game::includes::state::GameState;
-use bevy_barcamp::game::player::PlayerRoot;
+use bevy_barcamp::game::player::Player;
 use macros::step;
 
 const MIN_MOVEMENT_DELTA: f32 = 50.0;
@@ -36,21 +36,21 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
 pub fn handle_capture_player_position(
     _capture_event: On<CapturePlayerPosition>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    state: Res<State<GameState>>,
-    root_query: Query<&Transform, With<PlayerRoot>>,
-    mut tracker: ResMut<PlayerPositionTracker>,
+    game_state: Res<State<GameState>>,
+    player_query: Query<&Transform, With<Player>>,
+    mut position_tracker: ResMut<PlayerPositionTracker>,
 ) {
     println!("Handling CapturePlayerPosition");
 
-    if *state.get() != GameState::Running {
+    if *game_state.get() != GameState::Running {
         panic!("CapturePlayerPosition triggered outside of GameState::Running");
     }
 
-    let mut roots = root_query.iter();
+    let mut roots = player_query.iter();
     let transform = roots
         .next()
         .unwrap_or_else(|| panic!("Player root entity not found when capturing position"));
-    tracker.last_position = Some(transform.translation);
+    position_tracker.last_position = Some(transform.translation);
 
     unfinished_steps.sub_one();
     println!("CapturePlayerPosition completed.");
@@ -80,25 +80,25 @@ pub fn handle_player_move(
 pub fn handle_verify_player_moved(
     verify_event: On<VerifyPlayerMoved>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    mut tracker: ResMut<PlayerPositionTracker>,
-    root_query: Query<&Transform, With<PlayerRoot>>,
+    mut position_tracker: ResMut<PlayerPositionTracker>,
+    player_query: Query<&Transform, With<Player>>,
     mut commands: Commands,
-    state: Res<State<GameState>>,
+    game_state: Res<State<GameState>>,
 ) {
     println!(
         "Handling VerifyPlayerMoved {:?}",
         verify_event.expected_direction
     );
 
-    if *state.get() != GameState::Running {
+    if *game_state.get() != GameState::Running {
         panic!("VerifyPlayerMoved fired outside of GameState::Running");
     }
 
-    let previous_position = tracker
+    let previous_position = position_tracker
         .last_position
         .unwrap_or_else(|| panic!("Player position was not captured before verification"));
 
-    let mut roots = root_query.iter();
+    let mut roots = player_query.iter();
     let current_transform = roots
         .next()
         .unwrap_or_else(|| panic!("Player root entity not found during verification"));
@@ -119,7 +119,7 @@ pub fn handle_verify_player_moved(
         ),
     }
 
-    tracker.last_position = Some(current_position);
+    position_tracker.last_position = Some(current_position);
 
     commands.trigger(PlayerMove {
         direction: verify_event.expected_direction,
