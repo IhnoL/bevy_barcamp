@@ -18,4 +18,9 @@
 - VerifyTerrainSpawned()
 
 ## Jump-Test 
-- TBD: Will be implemented later
+- CapturePlayerPosition
+- JumpPlayer
+- WaitStep
+- VerifyPlayerIsInTheAir
+- WaitStep
+- VerifyPlayerIsAtCapturedPosition
