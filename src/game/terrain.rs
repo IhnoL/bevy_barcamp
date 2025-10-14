@@ -30,10 +30,10 @@ impl Plugin for TerrainPlugin {
 
 pub fn spawn(
     mut commands: Commands,
-    existing: Query<(), With<TerrainRoot>>,
+    existing_terrain_roots: Query<(), With<TerrainRoot>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if !existing.is_empty() {
+    if !existing_terrain_roots.is_empty() {
         return;
     }
 
@@ -71,21 +71,21 @@ pub fn spawn(
 
 pub fn despawn(
     mut commands: Commands,
-    roots: Query<Entity, With<TerrainRoot>>,
-    pieces: Query<Entity, With<TerrainPiece>>,
+    terrain_root_query: Query<Entity, With<TerrainRoot>>,
+    terrain_piece_query: Query<Entity, With<TerrainPiece>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if pieces.is_empty() && roots.is_empty() {
+    if terrain_piece_query.is_empty() && terrain_root_query.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for entity in pieces.iter() {
+    for entity in terrain_piece_query.iter() {
         commands.entity(entity).despawn();
     }
 
-    for entity in roots.iter() {
+    for entity in terrain_root_query.iter() {
         commands.entity(entity).despawn();
     }
 

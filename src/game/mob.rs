@@ -66,10 +66,10 @@ impl Plugin for MobPlugin {
 fn spawn(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    existing: Query<(), With<Mob>>,
+    existing_mobs: Query<(), With<Mob>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if !existing.is_empty() {
+    if !existing_mobs.is_empty() {
         return;
     }
 
@@ -117,16 +117,16 @@ fn spawn(
 
 fn despawn(
     mut commands: Commands,
-    roots: Query<(Entity, Option<&Children>), With<Mob>>,
+    mob_roots: Query<(Entity, Option<&Children>), With<Mob>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if roots.is_empty() {
+    if mob_roots.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for (entity, children) in roots.iter() {
+    for (entity, children) in mob_roots.iter() {
         if let Some(children) = children {
             for child in children.iter() {
                 commands.entity(child).despawn();

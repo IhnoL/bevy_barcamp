@@ -46,8 +46,8 @@ pub fn handle_capture_player_position(
         panic!("CapturePlayerPosition triggered outside of GameState::Running");
     }
 
-    let mut roots = player_query.iter();
-    let transform = roots
+    let mut player_iter = player_query.iter();
+    let transform = player_iter
         .next()
         .unwrap_or_else(|| panic!("Player root entity not found when capturing position"));
     position_tracker.last_position = Some(transform.translation);
@@ -60,11 +60,11 @@ pub fn handle_player_move(
     move_event: On<TriggerPlayerMove>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     mut commands: Commands,
-    state: Res<State<GameState>>,
+    game_state: Res<State<GameState>>,
 ) {
     println!("Handling TriggerMovePlayer {:?}", move_event.direction);
 
-    if *state.get() != GameState::Running {
+    if *game_state.get() != GameState::Running {
         panic!("TriggerMovePlayer fired outside of GameState::Running");
     }
 
@@ -98,8 +98,8 @@ pub fn handle_verify_player_moved(
         .last_position
         .unwrap_or_else(|| panic!("Player position was not captured before verification"));
 
-    let mut roots = player_query.iter();
-    let current_transform = roots
+    let mut player_iter = player_query.iter();
+    let current_transform = player_iter
         .next()
         .unwrap_or_else(|| panic!("Player root entity not found during verification"));
     let current_position = current_transform.translation;

@@ -12,18 +12,18 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
 pub fn handle_verify_terrain_spawned(
     _verify_event: On<VerifyTerrainSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    state: Res<State<GameState>>,
-    root_query: Query<(Entity, &Name), With<TerrainRoot>>,
+    game_state: Res<State<GameState>>,
+    terrain_root_query: Query<(Entity, &Name), With<TerrainRoot>>,
     children_query: Query<&Children>,
     terrain_piece_query: Query<Entity, With<TerrainPiece>>,
 ) {
     println!("Handling VerifyTerrainSpawned");
 
-    if *state.get() != GameState::Running {
+    if *game_state.get() != GameState::Running {
         panic!("Terrain verification ran outside of GameState::Running");
     }
 
-    let (root_entity, _) = root_query
+    let (root_entity, _) = terrain_root_query
         .iter()
         .find(|(_, name)| name.as_str() == "Terrain")
         .unwrap_or_else(|| panic!("Terrain root entity with name 'Terrain' not found"));

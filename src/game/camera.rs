@@ -19,10 +19,10 @@ impl Plugin for CameraPlugin {
 
 pub fn spawn(
     mut commands: Commands,
-    existing_cameras: Query<(), With<GameCamera>>,
+    existing_game_cameras: Query<(), With<GameCamera>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if !existing_cameras.is_empty() {
+    if !existing_game_cameras.is_empty() {
         return;
     }
 
@@ -54,16 +54,16 @@ pub fn spawn(
 
 pub fn despawn(
     mut commands: Commands,
-    cameras: Query<Entity, With<GameCamera>>,
+    game_camera_query: Query<Entity, With<GameCamera>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if cameras.is_empty() {
+    if game_camera_query.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for entity in cameras.iter() {
+    for entity in game_camera_query.iter() {
         commands.entity(entity).despawn();
     }
 

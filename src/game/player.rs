@@ -125,16 +125,16 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
 
 fn despawn(
     mut commands: Commands,
-    roots: Query<(Entity, Option<&Children>), With<Player>>,
+    player_roots: Query<(Entity, Option<&Children>), With<Player>>,
     mut transitions: ResMut<UnfinishedStateTransitions>,
 ) {
-    if roots.is_empty() {
+    if player_roots.is_empty() {
         return;
     }
 
     transitions.add_one();
 
-    for (entity, children) in roots.iter() {
+    for (entity, children) in player_roots.iter() {
         if let Some(children) = children {
             for child in children.iter() {
                 commands.entity(child).despawn();

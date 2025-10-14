@@ -41,14 +41,14 @@ pub fn handle_capture_baseline_entities(
 pub fn handle_verify_entities_despawned(
     _verify_event: On<VerifyEntitiesDespawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    state: Res<State<GameState>>,
+    game_state: Res<State<GameState>>,
     baseline: Res<BaselineEntities>,
     named_entities: Query<(Entity, Option<&Name>)>,
     ambient_light: Option<Res<AmbientLight>>,
 ) {
     println!("Handling VerifyEntitiesDespawned");
 
-    if *state.get() != GameState::Uninitialized {
+    if *game_state.get() != GameState::Uninitialized {
         panic!("VerifyEntitiesDespawned ran outside of GameState::Uninitialized");
     }
 

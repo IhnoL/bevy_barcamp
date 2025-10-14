@@ -36,7 +36,7 @@ fn handle_quit_game(_quit: On<QuitGame>, mut target: ResMut<TargetState>) {
 }
 
 fn advance_state(
-    state: Res<State<GameState>>,
+    game_state: Res<State<GameState>>,
     mut target_state_res: ResMut<TargetState>,
     transitions: Res<UnfinishedStateTransitions>,
     mut next_state: ResMut<NextState<GameState>>,
@@ -45,7 +45,7 @@ fn advance_state(
         return;
     };
 
-    let current_state = *state.get();
+    let current_state = *game_state.get();
     if current_state == target_state {
         target_state_res.state = None;
         return;

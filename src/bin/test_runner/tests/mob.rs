@@ -12,22 +12,22 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
 pub fn handle_verify_mob_spawned(
     _verify_event: On<VerifyMobSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    state: Res<State<GameState>>,
-    root_query: Query<(Entity, &Children), With<Mob>>,
-    part_query: Query<(&MobBodyPart, &ChildOf)>,
+    game_state: Res<State<GameState>>,
+    mob_query: Query<(Entity, &Children), With<Mob>>,
+    mob_body_part_query: Query<(&MobBodyPart, &ChildOf)>,
 ) {
     println!("Handling VerifyMobSpawned");
 
-    if *state.get() != GameState::Running {
+    if *game_state.get() != GameState::Running {
         panic!("Mob verification ran outside of GameState::Running");
     }
 
-    let mut root_iter = root_query.iter();
-    let (root_entity, children) = root_iter
+    let mut mob_iter = mob_query.iter();
+    let (root_entity, children) = mob_iter
         .next()
         .unwrap_or_else(|| panic!("Mob root entity with required components not found"));
     assert!(
-        root_iter.next().is_none(),
+        mob_iter.next().is_none(),
         "Multiple Mob root entities found"
     );
 
@@ -40,7 +40,7 @@ pub fn handle_verify_mob_spawned(
     let mut leg_count = 0usize;
     let mut attached_part_count = 0usize;
 
-    for (part, child_of) in part_query.iter() {
+    for (part, child_of) in mob_body_part_query.iter() {
         if child_of.parent() == root_entity {
             attached_part_count += 1;
             match part.kind {
