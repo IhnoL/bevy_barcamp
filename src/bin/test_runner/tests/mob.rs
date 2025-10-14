@@ -18,14 +18,16 @@ pub fn handle_verify_mob_spawned(
 ) {
     println!("Handling VerifyMobSpawned");
 
-    if *game_state.get() != GameState::Running {
-        panic!("Mob verification ran outside of GameState::Running");
-    }
+    assert_eq!(
+        *game_state.get(),
+        GameState::Running,
+        "Mob verification ran outside of GameState::Running"
+    );
 
     let mut mob_iter = mob_query.iter();
     let (root_entity, children) = mob_iter
         .next()
-        .unwrap_or_else(|| panic!("Mob root entity with required components not found"));
+        .expect("Mob root entity with required components not found");
     assert!(
         mob_iter.next().is_none(),
         "Multiple Mob root entities found"

@@ -4,6 +4,9 @@ pub trait TestStep: Send + Sync + 'static {
     fn send(&self, world: &mut World);
 }
 
+#[derive(Default, Resource, Debug)]
+pub struct PlayerCapturedPosition(pub Option<Vec3>);
+
 #[derive(Default, Resource)]
 pub struct UnfinishedSteps(pub usize);
 
@@ -18,6 +21,5 @@ impl UnfinishedSteps {
 }
 
 #[derive(Default, Resource)]
-pub struct PendingWaitStep {
-    pub wait_cycles: Option<usize>,
-}
+pub struct PendingWaitStep(pub Option<usize>);
+

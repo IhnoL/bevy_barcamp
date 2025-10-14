@@ -19,18 +19,20 @@ pub fn handle_verify_terrain_spawned(
 ) {
     println!("Handling VerifyTerrainSpawned");
 
-    if *game_state.get() != GameState::Running {
-        panic!("Terrain verification ran outside of GameState::Running");
-    }
+    assert_eq!(
+        *game_state.get(),
+        GameState::Running,
+        "Terrain verification ran outside of GameState::Running"
+    );
 
     let (root_entity, _) = terrain_root_query
         .iter()
         .find(|(_, name)| name.as_str() == "Terrain")
-        .unwrap_or_else(|| panic!("Terrain root entity with name 'Terrain' not found"));
+        .expect("Terrain root entity with name 'Terrain' not found");
 
     let children = children_query
         .get(root_entity)
-        .unwrap_or_else(|_| panic!("Terrain root entity did not have any children"));
+        .expect("Terrain root entity did not have any children");
 
     let total_pieces = terrain_piece_query.iter().count();
     assert!(

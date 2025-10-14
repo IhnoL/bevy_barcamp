@@ -23,6 +23,15 @@ pub struct CaptureBaselineEntities;
 pub struct CapturePlayerPosition;
 
 #[derive(Clone, Event, Message, TestStep)]
+pub struct JumpPlayer;
+
+#[derive(Clone, Event, Message, TestStep)]
+pub struct VerifyPlayerIsInTheAir;
+
+#[derive(Clone, Event, Message, TestStep)]
+pub struct VerifyPlayerIsAtCapturedPosition;
+
+#[derive(Clone, Event, Message, TestStep)]
 pub struct TriggerPlayerMove {
     pub direction: Direction,
 }

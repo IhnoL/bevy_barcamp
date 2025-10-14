@@ -1,10 +1,11 @@
+mod common_handlers;
 mod events;
 mod includes;
 mod tests;
-use crate::tests::movement;
+use crate::tests::{jump, movement};
 use bevy::prelude::*;
 use bevy_barcamp::game::includes::state::GameState;
-use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep, WaitStep};
+use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
@@ -23,6 +24,7 @@ fn main() {
     test_queue.steps.extend(terrain::provide_steps());
     test_queue.steps.extend(player::provide_steps());
     test_queue.steps.extend(mob::provide_steps());
+    // test_queue.steps.extend(jump::provide_steps());
     test_queue.steps.extend(movement::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
     test_queue.steps.extend(teardown::provide_steps());
@@ -35,11 +37,7 @@ fn main() {
 fn setup_test_app(mut app: App, test_queue: TestStepQueue) -> App {
     app.insert_resource(test_queue)
         .init_resource::<UnfinishedSteps>()
-        .init_resource::<PendingWaitStep>()
-        .add_systems(Update, (process_wait_cycles, send_step_from_queue))
-        .add_systems(OnEnter(GameState::Running), handle_start_game)
-        .add_systems(OnEnter(GameState::Uninitialized), handle_quit_game)
-        .add_observer(handle_wait_step)
+        .add_systems(Update, send_step_from_queue)
         .add_plugins(TestsPlugin);
     app
 }
@@ -53,36 +51,6 @@ fn send_step_from_queue(world: &mut World) {
         } else {
             println!("All tests completed!");
             std::process::exit(0);
-        }
-    }
-}
-
-fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.sub_one();
-    println!("StartGameStep completed.");
-}
-
-fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.sub_one();
-    println!("QuitGameStep completed.");
-}
-
-fn handle_wait_step(wait_step: On<WaitStep>, mut pending: ResMut<PendingWaitStep>) {
-    println!("Handling WaitStep waiting");
-    pending.wait_cycles = Some(wait_step.updates);
-}
-
-fn process_wait_cycles(
-    mut pending: ResMut<PendingWaitStep>,
-    mut unfinished_steps: ResMut<UnfinishedSteps>,
-) {
-    if let Some(wait_cycles) = pending.wait_cycles.as_mut() {
-        println!("Still waiting..");
-        *wait_cycles = wait_cycles.saturating_sub(1);
-        if *wait_cycles == 0 {
-            println!("WaitStep completed.");
-            pending.wait_cycles = None;
-            unfinished_steps.sub_one();
         }
     }
 }

@@ -21,14 +21,16 @@ pub fn handle_verify_player_spawned(
 ) {
     println!("Handling VerifyPlayerSpawned");
 
-    if *game_state.get() != GameState::Running {
-        panic!("Player verification ran outside of GameState::Running");
-    }
+    assert_eq!(
+        *game_state.get(),
+        GameState::Running,
+        "Player verification ran outside of GameState::Running"
+    );
 
     let mut player_iter = player_query.iter();
     let root_entity = player_iter
         .next()
-        .unwrap_or_else(|| panic!("Player root entity with required components not found"));
+        .expect("Player root entity with required components not found");
     assert!(
         player_iter.next().is_none(),
         "Multiple Player root entities found"
@@ -36,7 +38,7 @@ pub fn handle_verify_player_spawned(
 
     let children = children_query
         .get(root_entity)
-        .unwrap_or_else(|_| panic!("Player root entity did not have any children"));
+        .expect("Player root entity did not have any children");
 
     assert!(
         !children.is_empty(),
