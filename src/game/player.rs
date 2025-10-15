@@ -160,35 +160,33 @@ fn despawn(
 fn on_move(
     move_event: On<PlayerMove>,
     mut commands: Commands,
-    mut player_query: Query<(Entity, &mut LinearVelocity, Option<&PlayerMovement>), With<Player>>,
+    mut player_query: Query<(Entity, &mut Transform), With<Player>>,
+    time: Res<Time>,
 ) {
-    let (player_entity, mut velocity, current_movement) =
+    let (player_entity, mut transform) =
         player_query.iter_mut().next().expect("Player must exist");
 
     if move_event.active {
-        let direction = move_event.direction;
-        velocity.x = f32::from(direction) * PLAYER_MOVE_SPEED;
+        let direction = f32::from(move_event.direction);
+        transform.translation.x += direction * PLAYER_MOVE_SPEED * 0.03;
 
         commands
             .entity(player_entity)
-            .insert(PlayerMovement { direction });
-    } else if current_movement
-        .map(|movement| movement.direction == move_event.direction)
-        .unwrap_or(false)
-    {
-        velocity.x = 0.0;
+            .insert(PlayerMovement {
+                direction: move_event.direction,
+            });
+    } else {
         commands.entity(player_entity).remove::<PlayerMovement>();
     }
 }
 
 fn apply_player_movement(
-    mut player_query: Query<(&mut LinearVelocity, Option<&PlayerMovement>), With<Player>>,
+    time: Res<Time>,
+    mut player_query: Query<(&mut Transform, &PlayerMovement), With<Player>>,
 ) {
-    if let Some((mut velocity, movement)) = player_query.iter_mut().next() {
-        let target_speed = movement
-            .map(|movement| f32::from(movement.direction) * PLAYER_MOVE_SPEED)
-            .unwrap_or(0.0);
-        velocity.x = target_speed;
+    if let Some((mut transform, movement)) = player_query.iter_mut().next() {
+        let displacement = f32::from(movement.direction) * PLAYER_MOVE_SPEED * time.delta_secs();
+        transform.translation.x += displacement;
     }
 }
 

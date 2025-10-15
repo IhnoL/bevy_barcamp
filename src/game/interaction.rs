@@ -19,8 +19,8 @@ impl Plugin for InteractionPlugin {
 
 fn handle_keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut commands: Commands) {
     for (key, direction) in [
-        (KeyCode::ArrowLeft, Direction::Left),
-        (KeyCode::ArrowRight, Direction::Right),
+        (KeyCode::KeyA, Direction::Left),
+        (KeyCode::KeyD, Direction::Right),
     ] {
         if keyboard.just_pressed(key) {
             commands.trigger(PlayerMove {
