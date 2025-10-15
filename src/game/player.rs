@@ -197,10 +197,7 @@ fn on_jump(
     mut player_query: Query<(&CollidingEntities, &mut LinearVelocity), With<Player>>,
     terrain_query: Query<(), With<TerrainPiece>>,
 ) {
-    let Some((collisions, mut velocity)) = player_query.iter_mut().next() else {
-        panic!("Player must exist");
-    };
-
+    let (collisions, mut velocity) = player_query.iter_mut().next() .expect("Player must exist"); 
     if player_is_grounded(collisions, &terrain_query) {
         velocity.y = PLAYER_JUMP_SPEED.max(velocity.y);
     }

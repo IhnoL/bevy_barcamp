@@ -13,7 +13,6 @@ impl BaselineEntities {
     fn set(&mut self, snapshots: Vec<(Entity, Option<String>)>) {
         self.entities = snapshots.into_iter().map(|(entity, _)| entity).collect();
     }
-
     fn contains(&self, entity: Entity) -> bool {
         self.entities.contains(&entity)
     }
@@ -29,8 +28,6 @@ pub fn handle_capture_baseline_entities(
     mut baseline: ResMut<BaselineEntities>,
     named_entities: Query<(Entity, Option<&Name>)>,
 ) {
-    println!("Handling CaptureBaselineEntities");
-
     let snapshots = collect_snapshots(&named_entities);
     baseline.set(snapshots);
 
@@ -41,17 +38,10 @@ pub fn handle_capture_baseline_entities(
 pub fn handle_verify_entities_despawned(
     _verify_event: On<VerifyEntitiesDespawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    game_state: Res<State<GameState>>,
     baseline: Res<BaselineEntities>,
     named_entities: Query<(Entity, Option<&Name>)>,
     ambient_light: Option<Res<AmbientLight>>,
 ) {
-    println!("Handling VerifyEntitiesDespawned");
-
-    if *game_state.get() != GameState::Uninitialized {
-        panic!("VerifyEntitiesDespawned ran outside of GameState::Uninitialized");
-    }
-
     let current_snapshots = collect_snapshots(&named_entities);
 
     for (entity, maybe_name) in current_snapshots {

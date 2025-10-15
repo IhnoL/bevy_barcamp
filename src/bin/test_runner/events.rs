@@ -23,6 +23,7 @@ pub struct CaptureBaselineEntities;
 pub struct CapturePlayerPosition;
 
 #[derive(Clone, Event, Message, TestStep)]
+#[step_dispatch(event = bevy_barcamp::game::includes::events::PlayerJump)]
 pub struct JumpPlayer;
 
 #[derive(Clone, Event, Message, TestStep)]

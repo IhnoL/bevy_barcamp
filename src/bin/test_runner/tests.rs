@@ -29,7 +29,7 @@ impl Plugin for TestsPlugin {
             )
             .add_observer(common_handlers::handle_wait_step)
             .add_observer(common_handlers::handle_capture_player_position)
-            .add_observer(jump::handle_jump_player)
+            .add_observer(jump::handle_player_jump)
             .add_observer(jump::handle_verify_player_is_in_the_air)
             .add_observer(jump::handle_verify_player_is_at_captured_position)
             .add_observer(movement::handle_player_move)

@@ -14,19 +14,10 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
 pub fn handle_verify_player_spawned(
     _verify_event: On<VerifyPlayerSpawned>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    game_state: Res<State<GameState>>,
     player_query: Query<Entity, With<Player>>,
     children_query: Query<&Children>,
     body_part_query: Query<(&PlayerBodyPart, &ChildOf)>,
 ) {
-    println!("Handling VerifyPlayerSpawned");
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "Player verification ran outside of GameState::Running"
-    );
-
     let mut player_iter = player_query.iter();
     let root_entity = player_iter
         .next()

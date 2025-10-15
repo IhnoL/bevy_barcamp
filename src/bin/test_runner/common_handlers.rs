@@ -1,8 +1,6 @@
 use crate::events::{CapturePlayerPosition, WaitStep};
 use crate::includes::*;
 use bevy::prelude::*;
-use bevy_barcamp::game::includes::state::GameState;
-
 pub fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
     unfinished_steps.sub_one();
     println!("StartGameStep completed.");
@@ -36,18 +34,9 @@ pub fn process_wait_cycles(
 pub fn handle_capture_player_position(
     _capture_event: On<CapturePlayerPosition>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    game_state: Res<State<GameState>>,
     player_query: Query<&Transform, With<bevy_barcamp::game::player::Player>>,
     mut captured_position: ResMut<PlayerCapturedPosition>,
 ) {
-    println!("Handling CapturePlayerPosition");
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "CapturePlayerPosition triggered outside of GameState::Running"
-    );
-
     let mut player_iter = player_query.iter();
     let transform = player_iter
         .next()

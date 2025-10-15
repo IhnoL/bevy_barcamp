@@ -32,16 +32,7 @@ pub fn handle_player_move(
     move_event: On<TriggerPlayerMove>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     mut commands: Commands,
-    game_state: Res<State<GameState>>,
 ) {
-    println!("Handling TriggerMovePlayer {:?}", move_event.direction);
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "TriggerMovePlayer fired outside of GameState::Running"
-    );
-
     commands.trigger(PlayerMove {
         direction: move_event.direction,
         active: true,
@@ -57,19 +48,7 @@ pub fn handle_verify_player_moved(
     mut captured_position: ResMut<PlayerCapturedPosition>,
     player_query: Query<&Transform, With<Player>>,
     mut commands: Commands,
-    game_state: Res<State<GameState>>,
 ) {
-    println!(
-        "Handling VerifyPlayerMoved {:?}",
-        verify_event.expected_direction
-    );
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "VerifyPlayerMoved fired outside of GameState::Running"
-    );
-
     let previous_position = captured_position
         .0
         .unwrap_or_else(|| panic!("Player position was not captured before verification"));

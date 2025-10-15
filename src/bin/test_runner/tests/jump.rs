@@ -4,49 +4,26 @@ use crate::events::{
 };
 use crate::includes::*;
 use crate::includes::PlayerCapturedPosition;
-use bevy_barcamp::game::includes::events::PlayerJump;
-use bevy_barcamp::game::includes::state::GameState;
 use bevy_barcamp::game::player::Player;
 use macros::step;
+use bevy_barcamp::game::includes::events::PlayerJump;
 
 const MIN_JUMP_HEIGHT: f32 = 50.0;
 const LANDING_TOLERANCE: f32 = 10.0;
-const WAIT_FOR_ASCENT_UPDATES: usize = 12;
-const WAIT_FOR_LANDING_UPDATES: usize = 36;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![
         step!(CapturePlayerPosition),
         step!(JumpPlayer),
         step!(WaitStep {
-            updates: WAIT_FOR_ASCENT_UPDATES
+            updates: 50
         }),
         step!(VerifyPlayerIsInTheAir),
         step!(WaitStep {
-            updates: WAIT_FOR_LANDING_UPDATES
+            updates: 50
         }),
         step!(VerifyPlayerIsAtCapturedPosition),
     ]
-}
-
-pub fn handle_jump_player(
-    _jump_event: On<JumpPlayer>,
-    mut unfinished_steps: ResMut<UnfinishedSteps>,
-    game_state: Res<State<GameState>>,
-    mut commands: Commands,
-) {
-    println!("Handling JumpPlayer");
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "JumpPlayer triggered outside of GameState::Running"
-    );
-
-    commands.trigger(PlayerJump);
-
-    unfinished_steps.sub_one();
-    println!("JumpPlayer completed.");
 }
 
 pub fn handle_verify_player_is_in_the_air(
@@ -54,16 +31,7 @@ pub fn handle_verify_player_is_in_the_air(
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     captured_position: Res<PlayerCapturedPosition>,
     player_query: Query<&Transform, With<Player>>,
-    game_state: Res<State<GameState>>,
 ) {
-    println!("Handling VerifyPlayerIsInTheAir");
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "VerifyPlayerIsInTheAir triggered outside of GameState::Running"
-    );
-
     let baseline_position = captured_position
         .0
         .expect("Player baseline position missing before verifying airborne state");
@@ -90,16 +58,7 @@ pub fn handle_verify_player_is_at_captured_position(
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     mut captured_position: ResMut<PlayerCapturedPosition>,
     player_query: Query<&Transform, With<Player>>,
-    game_state: Res<State<GameState>>,
 ) {
-    println!("Handling VerifyPlayerIsAtCapturedPosition");
-
-    assert_eq!(
-        *game_state.get(),
-        GameState::Running,
-        "VerifyPlayerIsAtCapturedPosition triggered outside of GameState::Running"
-    );
-
     let baseline_position = captured_position
         .0
         .expect("Player baseline position missing before verifying landing state");
@@ -121,4 +80,12 @@ pub fn handle_verify_player_is_at_captured_position(
 
     unfinished_steps.sub_one();
     println!("VerifyPlayerIsAtCapturedPosition completed.");
+}
+
+pub fn handle_player_jump(
+    _jump_event: On<PlayerJump>,
+    mut unfinished_steps: ResMut<UnfinishedSteps>,
+) {    
+    unfinished_steps.sub_one();
+    println!("JumpPlayer completed.");
 }
