@@ -3,7 +3,7 @@
 Following TDD workflow as specified in project guidelines:
 
 ### Phase 1: Dependencies & Setup
-1. Add `bevy_rapier2d` to Cargo.toml
+1. Add the Avian physics crate to Cargo.toml
 2. Configure physics plugin with gravity in main game setup
 
 ### Phase 2: Test Infrastructure Refactoring
@@ -38,7 +38,7 @@ Following TDD workflow as specified in project guidelines:
     - Add `PlayerJump` event
 
 11. Update `src/game/player.rs`:
-    - Add Rapier2D components (RigidBody, Collider, Velocity)
+    - Add Avian physics components (RigidBody, Collider, Velocity)
     - Add ground detection logic
     - Implement jump system (apply upward impulse)
     - Add observer for `PlayerJump` event
@@ -46,7 +46,7 @@ Following TDD workflow as specified in project guidelines:
 12. Update `src/game/interaction.rs`:
     - Add Space key handling to trigger `PlayerJump` event
 
-13. Update terrain with Rapier2D colliders for ground detection
+13. Update terrain with Avian colliders for ground detection
 
 ### Phase 5: Validation
 14. Run tests: `cargo run --bin test_runner`

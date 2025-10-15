@@ -12,6 +12,9 @@ pub struct PlayerMove {
     pub active: bool,
 }
 
+#[derive(Event)]
+pub struct PlayerJump;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Direction {
     Left,

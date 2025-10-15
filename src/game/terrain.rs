@@ -1,5 +1,6 @@
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
+use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 const GROUND_SIZE: Vec2 = Vec2::new(800.0, 40.0);
 const GROUND_Y: f32 = -360.0;
@@ -50,6 +51,8 @@ pub fn spawn(
         parent.spawn((
             Name::new("Ground"),
             TerrainPiece,
+            RigidBody::Static,
+            Collider::rectangle(GROUND_SIZE.x, GROUND_SIZE.y),
             Sprite::from_color(Color::srgb(0.4, 0.3, 0.2), GROUND_SIZE),
             Transform::from_xyz(0.0, GROUND_Y, 0.0),
             GlobalTransform::default(),
@@ -59,6 +62,8 @@ pub fn spawn(
             parent.spawn((
                 Name::new(format!("Platform{}", index + 1)),
                 TerrainPiece,
+                RigidBody::Static,
+                Collider::rectangle(PLATFORM_SIZE.x, PLATFORM_SIZE.y),
                 Sprite::from_color(Color::srgb(0.6, 0.6, 0.6), PLATFORM_SIZE),
                 Transform::from_translation(*translation),
                 GlobalTransform::default(),

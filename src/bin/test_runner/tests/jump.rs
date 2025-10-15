@@ -4,7 +4,7 @@ use crate::events::{
 };
 use crate::includes::*;
 use crate::includes::PlayerCapturedPosition;
-use bevy::prelude::*;
+use bevy_barcamp::game::includes::events::PlayerJump;
 use bevy_barcamp::game::includes::state::GameState;
 use bevy_barcamp::game::player::Player;
 use macros::step;
@@ -33,7 +33,7 @@ pub fn handle_jump_player(
     _jump_event: On<JumpPlayer>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     game_state: Res<State<GameState>>,
-    mut _commands: Commands,
+    mut commands: Commands,
 ) {
     println!("Handling JumpPlayer");
 
@@ -43,7 +43,7 @@ pub fn handle_jump_player(
         "JumpPlayer triggered outside of GameState::Running"
     );
 
-    // The actual PlayerJump event will be dispatched here once implemented in the game code.
+    commands.trigger(PlayerJump);
 
     unfinished_steps.sub_one();
     println!("JumpPlayer completed.");

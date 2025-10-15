@@ -4,7 +4,6 @@ mod includes;
 mod tests;
 use crate::tests::{jump, movement};
 use bevy::prelude::*;
-use bevy_barcamp::game::includes::state::GameState;
 use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
@@ -24,7 +23,7 @@ fn main() {
     test_queue.steps.extend(terrain::provide_steps());
     test_queue.steps.extend(player::provide_steps());
     test_queue.steps.extend(mob::provide_steps());
-    // test_queue.steps.extend(jump::provide_steps());
+    test_queue.steps.extend(jump::provide_steps());
     test_queue.steps.extend(movement::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
     test_queue.steps.extend(teardown::provide_steps());
@@ -58,6 +57,7 @@ fn send_step_from_queue(world: &mut World) {
 #[cfg(test)]
 mod queue_tests {
     use super::*;
+    use bevy_barcamp::game::includes::state::GameState;
     use bevy::prelude::NextState;
     use bevy::state::app::StatesPlugin;
 

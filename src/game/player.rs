@@ -1,13 +1,17 @@
+use avian2d::prelude::{Collider, CollidingEntities, LinearVelocity, LockedAxes, RigidBody};
 use bevy::prelude::*;
 
-use crate::game::includes::events::PlayerMove;
+use crate::game::includes::events::{Direction, PlayerJump, PlayerMove};
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
+use crate::game::terrain::TerrainPiece;
 
-const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
+const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -280.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
 const PLAYER_MOVE_SPEED: f32 = 920.0;
+const PLAYER_COLLIDER_SIZE: Vec2 = Vec2::new(48.0, 120.0);
+const PLAYER_JUMP_SPEED: f32 = 700.0;
 
 #[derive(Clone, Copy)]
 struct BodyPartSpec {
@@ -20,37 +24,37 @@ struct BodyPartSpec {
 const BODY_PART_SPECS: [BodyPartSpec; 6] = [
     BodyPartSpec {
         kind: BodyPart::Head,
-        offset: Vec3::new(0.0, 54.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(0.0, 34.0, PLAYER_Z_OFFSET),
         size: Vec2::new(36.0, 4.0),
         rotation_radians: 0.0,
     },
     BodyPartSpec {
         kind: BodyPart::Torso,
-        offset: Vec3::new(0.0, 18.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(0.0, -2.0, PLAYER_Z_OFFSET),
         size: Vec2::new(4.0, 64.0),
         rotation_radians: 0.0,
     },
     BodyPartSpec {
         kind: BodyPart::ArmLeft,
-        offset: Vec3::new(-26.0, 24.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(-26.0, 4.0, PLAYER_Z_OFFSET),
         size: Vec2::new(52.0, 4.0),
         rotation_radians: std::f32::consts::FRAC_PI_4,
     },
     BodyPartSpec {
         kind: BodyPart::ArmRight,
-        offset: Vec3::new(26.0, 24.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(26.0, 4.0, PLAYER_Z_OFFSET),
         size: Vec2::new(52.0, 4.0),
         rotation_radians: -std::f32::consts::FRAC_PI_4,
     },
     BodyPartSpec {
         kind: BodyPart::LegLeft,
-        offset: Vec3::new(-16.0, -42.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(-16.0, -62.0, PLAYER_Z_OFFSET),
         size: Vec2::new(56.0, 4.0),
         rotation_radians: std::f32::consts::FRAC_PI_6,
     },
     BodyPartSpec {
         kind: BodyPart::LegRight,
-        offset: Vec3::new(16.0, -42.0, PLAYER_Z_OFFSET),
+        offset: Vec3::new(16.0, -62.0, PLAYER_Z_OFFSET),
         size: Vec2::new(56.0, 4.0),
         rotation_radians: -std::f32::consts::FRAC_PI_6,
     },
@@ -67,7 +71,8 @@ impl Plugin for PlayerPlugin {
                 Update,
                 apply_player_movement.run_if(in_state(GameState::Running)),
             )
-            .add_observer(on_move);
+            .add_observer(on_move)
+            .add_observer(on_jump);
     }
 }
 
@@ -79,9 +84,9 @@ pub struct PlayerBodyPart {
     pub kind: BodyPart,
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Clone, Copy, Debug)]
 struct PlayerMovement {
-    direction: f32,
+    direction: Direction,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -100,6 +105,11 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
     let mut root = commands.spawn((
         Name::new("Player"),
         Player,
+        RigidBody::Dynamic,
+        Collider::rectangle(PLAYER_COLLIDER_SIZE.x, PLAYER_COLLIDER_SIZE.y),
+        LinearVelocity::ZERO,
+        LockedAxes::ROTATION_LOCKED,
+        CollidingEntities::default(),
         Transform::from_translation(PLAYER_POSITION),
         GlobalTransform::default(),
     ));
@@ -150,28 +160,57 @@ fn despawn(
 fn on_move(
     move_event: On<PlayerMove>,
     mut commands: Commands,
-    mut player_query: Query<(Entity, &mut Transform), With<Player>>,
-    time: Res<Time>,
+    mut player_query: Query<(Entity, &mut LinearVelocity, Option<&PlayerMovement>), With<Player>>,
 ) {
-    let (player_entity, mut transform) = player_query.iter_mut().next().expect("Player must exist");
+    let (player_entity, mut velocity, current_movement) =
+        player_query.iter_mut().next().expect("Player must exist");
 
     if move_event.active {
-        let direction = f32::from(move_event.direction);
-        transform.translation.x += direction * PLAYER_MOVE_SPEED * time.delta_secs();
+        let direction = move_event.direction;
+        velocity.x = f32::from(direction) * PLAYER_MOVE_SPEED;
 
         commands
             .entity(player_entity)
             .insert(PlayerMovement { direction });
-    } else {
+    } else if current_movement
+        .map(|movement| movement.direction == move_event.direction)
+        .unwrap_or(false)
+    {
+        velocity.x = 0.0;
         commands.entity(player_entity).remove::<PlayerMovement>();
     }
 }
 
 fn apply_player_movement(
-    time: Res<Time>,
-    mut player_query: Query<(&mut Transform, &PlayerMovement), With<Player>>,
+    mut player_query: Query<(&mut LinearVelocity, Option<&PlayerMovement>), With<Player>>,
 ) {
-    if let Some((mut transform, movement)) = player_query.iter_mut().next() {
-        transform.translation.x += movement.direction * PLAYER_MOVE_SPEED * time.delta_secs();
+    if let Some((mut velocity, movement)) = player_query.iter_mut().next() {
+        let target_speed = movement
+            .map(|movement| f32::from(movement.direction) * PLAYER_MOVE_SPEED)
+            .unwrap_or(0.0);
+        velocity.x = target_speed;
+    }
+}
+
+fn on_jump(
+    _jump_event: On<PlayerJump>,
+    mut player_query: Query<(&CollidingEntities, &mut LinearVelocity), With<Player>>,
+    terrain_query: Query<(), With<TerrainPiece>>,
+) {
+    let Some((collisions, mut velocity)) = player_query.iter_mut().next() else {
+        panic!("Player must exist");
     };
+
+    if player_is_grounded(collisions, &terrain_query) {
+        velocity.y = PLAYER_JUMP_SPEED.max(velocity.y);
+    }
+}
+
+fn player_is_grounded(
+    collisions: &CollidingEntities,
+    terrain_query: &Query<(), With<TerrainPiece>>,
+) -> bool {
+    collisions
+        .iter()
+        .any(|entity| terrain_query.get(*entity).is_ok())
 }

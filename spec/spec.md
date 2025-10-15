@@ -1,7 +1,7 @@
 # General
 - game should be a 2D platformer and have a resolution of 800x800
 - game should look like image /spec/layout.png (we will not implement the "Mob" for now)
-- game uses bevy_rapier2d physics engine for gravity and vertical movement
+- game uses the Avian physics engine (https://github.com/Jondolf/avian) for gravity and vertical movement
 
 # Modules
 - Each module should be implemented in its own file as a bevy-plugin

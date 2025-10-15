@@ -2,7 +2,7 @@ use bevy::input::ButtonInput;
 use bevy::input::keyboard::KeyCode;
 use bevy::prelude::*;
 
-use crate::game::includes::events::{Direction, PlayerMove};
+use crate::game::includes::events::{Direction, PlayerJump, PlayerMove};
 use crate::game::includes::state::GameState;
 
 #[derive(Default)]
@@ -35,5 +35,9 @@ fn handle_keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut commands: Comm
                 active: false,
             });
         }
+    }
+
+    if keyboard.just_pressed(KeyCode::Space) {
+        commands.trigger(PlayerJump);
     }
 }
