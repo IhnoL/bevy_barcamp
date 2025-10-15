@@ -1,13 +1,13 @@
 use bevy::prelude::*;
 
-use crate::game::includes::events::{Direction, PlayerMove};
+use crate::game::includes::events::PlayerMove;
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 
 const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -300.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
-const PLAYER_MOVE_SPEED: f32 = 320.0;
+const PLAYER_MOVE_SPEED: f32 = 920.0;
 
 #[derive(Clone, Copy)]
 struct BodyPartSpec {
@@ -81,7 +81,7 @@ pub struct PlayerBodyPart {
 
 #[derive(Component, Debug)]
 struct PlayerMovement {
-    direction: Direction,
+    direction: f32,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -150,14 +150,18 @@ fn despawn(
 fn on_move(
     move_event: On<PlayerMove>,
     mut commands: Commands,
-    player_query: Query<Entity, With<Player>>,
+    mut player_query: Query<(Entity, &mut Transform), With<Player>>,
+    time: Res<Time>,
 ) {
-    let player_entity = player_query.iter().next().expect("Player must exist");
+    let (player_entity, mut transform) = player_query.iter_mut().next().expect("Player must exist");
 
     if move_event.active {
-        commands.entity(player_entity).insert(PlayerMovement {
-            direction: move_event.direction,
-        });
+        let direction = f32::from(move_event.direction);
+        transform.translation.x += direction * PLAYER_MOVE_SPEED * time.delta_secs();
+
+        commands
+            .entity(player_entity)
+            .insert(PlayerMovement { direction });
     } else {
         commands.entity(player_entity).remove::<PlayerMovement>();
     }
@@ -167,10 +171,7 @@ fn apply_player_movement(
     time: Res<Time>,
     mut player_query: Query<(&mut Transform, &PlayerMovement), With<Player>>,
 ) {
-    let Some((mut transform, movement)) = player_query.iter_mut().next() else {
-        return;
+    if let Some((mut transform, movement)) = player_query.iter_mut().next() {
+        transform.translation.x += movement.direction * PLAYER_MOVE_SPEED * time.delta_secs();
     };
-
-    let displacement = f32::from(movement.direction) * PLAYER_MOVE_SPEED * time.delta_secs();
-    transform.translation.x += displacement;
 }
