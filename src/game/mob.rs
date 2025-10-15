@@ -82,6 +82,8 @@ fn spawn(
         Mob,
         Transform::from_translation(MOB_POSITION),
         GlobalTransform::default(),
+        Visibility::Visible,
+        InheritedVisibility::default(),
     ));
 
     root.with_children(|parent| {

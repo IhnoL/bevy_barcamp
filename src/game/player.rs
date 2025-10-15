@@ -112,6 +112,8 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
         CollidingEntities::default(),
         Transform::from_translation(PLAYER_POSITION),
         GlobalTransform::default(),
+        Visibility::Visible,
+        InheritedVisibility::default(),
     ));
 
     root.with_children(|parent| {
@@ -161,7 +163,6 @@ fn on_move(
     move_event: On<PlayerMove>,
     mut commands: Commands,
     mut player_query: Query<(Entity, &mut Transform), With<Player>>,
-    time: Res<Time>,
 ) {
     let (player_entity, mut transform) =
         player_query.iter_mut().next().expect("Player must exist");

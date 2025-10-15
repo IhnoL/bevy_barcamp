@@ -45,6 +45,8 @@ pub fn spawn(
         TerrainRoot,
         Transform::default(),
         GlobalTransform::default(),
+        Visibility::Visible,
+        InheritedVisibility::default(),
     ));
 
     root.with_children(|parent| {
