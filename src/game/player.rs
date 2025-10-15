@@ -11,7 +11,7 @@ const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
 const PLAYER_MOVE_SPEED: f32 = 920.0;
 const PLAYER_COLLIDER_SIZE: Vec2 = Vec2::new(48.0, 120.0);
-const PLAYER_JUMP_SPEED: f32 = 700.0;
+const PLAYER_JUMP_SPEED: f32 = 1200.0;
 
 #[derive(Clone, Copy)]
 struct BodyPartSpec {

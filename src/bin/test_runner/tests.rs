@@ -4,12 +4,12 @@ use bevy_barcamp::game::includes::state::GameState;
 use crate::common_handlers;
 use crate::includes::PendingWaitStep;
 
-pub mod jump;
-pub mod mob;
-pub mod movement;
-pub mod player;
-pub mod teardown;
-pub mod terrain;
+pub mod jump_test;
+pub mod mob_test;
+pub mod movement_test;
+pub mod player_test;
+pub mod teardown_test;
+pub mod terrain_test;
 
 pub struct TestsPlugin;
 
@@ -17,7 +17,7 @@ impl Plugin for TestsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<crate::includes::PlayerCapturedPosition>()
             .init_resource::<PendingWaitStep>()
-            .init_resource::<teardown::BaselineEntities>()
+            .init_resource::<teardown_test::BaselineEntities>()
             .add_systems(Update, common_handlers::process_wait_cycles)
             .add_systems(
                 OnEnter(GameState::Running),
@@ -29,15 +29,15 @@ impl Plugin for TestsPlugin {
             )
             .add_observer(common_handlers::handle_wait_step)
             .add_observer(common_handlers::handle_capture_player_position)
-            .add_observer(jump::handle_player_jump)
-            .add_observer(jump::handle_verify_player_is_in_the_air)
-            .add_observer(jump::handle_verify_player_is_at_captured_position)
-            .add_observer(movement::handle_player_move)
-            .add_observer(movement::handle_verify_player_moved)
-            .add_observer(terrain::handle_verify_terrain_spawned)
-            .add_observer(player::handle_verify_player_spawned)
-            .add_observer(mob::handle_verify_mob_spawned)
-            .add_observer(teardown::handle_capture_baseline_entities)
-            .add_observer(teardown::handle_verify_entities_despawned);
+            .add_observer(jump_test::handle_player_jump)
+            .add_observer(jump_test::handle_verify_player_is_in_the_air)
+            .add_observer(jump_test::handle_verify_player_is_at_captured_position)
+            .add_observer(movement_test::handle_player_move)
+            .add_observer(movement_test::handle_verify_player_moved)
+            .add_observer(terrain_test::handle_verify_terrain_spawned)
+            .add_observer(player_test::handle_verify_player_spawned)
+            .add_observer(mob_test::handle_verify_mob_spawned)
+            .add_observer(teardown_test::handle_capture_baseline_entities)
+            .add_observer(teardown_test::handle_verify_entities_despawned);
     }
 }

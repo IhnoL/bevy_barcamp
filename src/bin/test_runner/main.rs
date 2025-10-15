@@ -2,13 +2,13 @@ mod common_handlers;
 mod events;
 mod includes;
 mod tests;
-use crate::tests::{jump, movement};
+use crate::tests::{jump_test, movement_test};
 use bevy::prelude::*;
 use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
-use tests::{TestsPlugin, mob, player, teardown, terrain};
+use tests::{TestsPlugin, mob_test, player_test, teardown_test, terrain_test};
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -20,16 +20,15 @@ fn main() {
 
     test_queue.steps.push_back(step!(CaptureBaselineEntities));
     test_queue.steps.push_back(step!(StartGameStep));
-    test_queue.steps.extend(terrain::provide_steps());
-    test_queue.steps.extend(player::provide_steps());
-    test_queue.steps.extend(mob::provide_steps());
-    test_queue.steps.extend(jump::provide_steps());
-    test_queue.steps.extend(movement::provide_steps());
+    test_queue.steps.extend(terrain_test::provide_steps());
+    test_queue.steps.extend(player_test::provide_steps());
+    test_queue.steps.extend(mob_test::provide_steps());
+    test_queue.steps.extend(jump_test::provide_steps());
+    test_queue.steps.extend(movement_test::provide_steps());
     test_queue.steps.push_back(step!(QuitGameStep));
-    test_queue.steps.extend(teardown::provide_steps());
+    test_queue.steps.extend(teardown_test::provide_steps());
 
-    let base_app = bevy_barcamp::run(App::new());
-    let mut app = setup_test_app(base_app, test_queue);
+    let mut app = setup_test_app(bevy_barcamp::init(App::new()),test_queue );
     app.run();
 }
 
