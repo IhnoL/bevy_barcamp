@@ -49,7 +49,7 @@ pub fn handle_verify_player_is_in_the_air(
         current_position.y
     );
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyPlayerIsInTheAir>();
     println!("VerifyPlayerIsInTheAir completed.");
 }
 
@@ -78,7 +78,7 @@ pub fn handle_verify_player_is_at_captured_position(
 
     captured_position.0 = Some(current_position);
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyPlayerIsAtCapturedPosition>();
     println!("VerifyPlayerIsAtCapturedPosition completed.");
 }
 
@@ -86,6 +86,6 @@ pub fn handle_player_jump(
     _jump_event: On<PlayerJump>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
 ) {    
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<JumpPlayer>();
     println!("JumpPlayer completed.");
 }

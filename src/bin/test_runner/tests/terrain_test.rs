@@ -41,6 +41,6 @@ pub fn handle_verify_terrain_spawned(
         pieces_under_root, total_pieces
     );
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyTerrainSpawned>();
     println!("VerifyTerrainSpawned completed.");
 }

@@ -75,6 +75,6 @@ pub fn handle_verify_player_spawned(
         kinds
     );
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyPlayerSpawned>();
     println!("VerifyPlayerSpawned completed.");
 }

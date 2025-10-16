@@ -31,7 +31,7 @@ pub fn handle_capture_baseline_entities(
     let snapshots = collect_snapshots(&named_entities);
     baseline.set(snapshots);
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<CaptureBaselineEntities>();
     println!("CaptureBaselineEntities completed.");
 }
 
@@ -64,7 +64,7 @@ pub fn handle_verify_entities_despawned(
         "AmbientLight resource still present after QuitGame"
     );
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyEntitiesDespawned>();
     println!("VerifyEntitiesDespawned completed.");
 }
 

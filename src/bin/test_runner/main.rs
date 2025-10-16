@@ -41,9 +41,10 @@ fn setup_test_app(mut app: App, test_queue: TestStepQueue) -> App {
 }
 
 fn send_step_from_queue(world: &mut World) {
-    if world.resource::<UnfinishedSteps>().0 == 0 {
+    if world.resource::<UnfinishedSteps>().is_empty() {
         if let Some(step) = world.resource_mut::<TestStepQueue>().steps.pop_front() {
-            world.resource_mut::<UnfinishedSteps>().add_one();
+            let step_id = std::any::Any::type_id(&*step);
+            world.resource_mut::<UnfinishedSteps>().add_type_id(step_id);
             step.send(world);
             println!("Sent step from queue.",);
         } else {
@@ -79,24 +80,24 @@ mod queue_tests {
 
         // Run test
         assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 3);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 0);
+        assert!(app.world().resource::<UnfinishedSteps>().is_empty());
 
         app.update();
         assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 2);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 1);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0.len(), 1);
 
         app.world_mut()
             .resource_mut::<NextState<GameState>>()
             .set(GameState::Running);
         app.update();
         assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 1);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 1);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0.len(), 1);
 
         app.world_mut()
             .resource_mut::<NextState<GameState>>()
             .set(GameState::Uninitialized);
         app.update();
         assert_eq!(app.world().resource::<TestStepQueue>().steps.len(), 0);
-        assert_eq!(app.world().resource::<UnfinishedSteps>().0, 1);
+        assert_eq!(app.world().resource::<UnfinishedSteps>().0.len(), 1);
     }
 }

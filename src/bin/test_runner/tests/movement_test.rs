@@ -38,7 +38,7 @@ pub fn handle_player_move(
         active: true,
     });
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<TriggerPlayerMove>();
     println!("TriggerMovePlayer completed.");
 }
 
@@ -81,6 +81,6 @@ pub fn handle_verify_player_moved(
         active: false,
     });
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyPlayerMoved>();
     println!("VerifyPlayerMoved completed.");
 }

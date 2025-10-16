@@ -1,13 +1,13 @@
-use crate::events::{CapturePlayerPosition, WaitStep};
+use crate::events::{CapturePlayerPosition, WaitStep, StartGameStep, QuitGameStep};
 use crate::includes::*;
 use bevy::prelude::*;
 pub fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<StartGameStep>();
     println!("StartGameStep completed.");
 }
 
 pub fn handle_quit_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<QuitGameStep>();
     println!("QuitGameStep completed.");
 }
 
@@ -26,7 +26,7 @@ pub fn process_wait_cycles(
         if *wait_cycles == 0 {
             println!("WaitStep completed.");
             pending.0 = None;
-            unfinished_steps.sub_one();
+            unfinished_steps.remove::<WaitStep>();
         }
     }
 }
@@ -43,6 +43,6 @@ pub fn handle_capture_player_position(
         .expect("Player root entity not found when capturing position");
     captured_position.0 = Some(transform.translation);
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<CapturePlayerPosition>();
     println!("CapturePlayerPosition completed.");
 }

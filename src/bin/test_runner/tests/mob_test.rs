@@ -53,6 +53,6 @@ pub fn handle_verify_mob_spawned(
     assert_eq!(torso_count, 1, "Mob spawned with {torso_count} torsos instead of 1");
     assert_eq!(leg_count, 4, "Mob spawned with {leg_count} legs instead of 4");
 
-    unfinished_steps.sub_one();
+    unfinished_steps.remove::<VerifyMobSpawned>();
     println!("VerifyMobSpawned completed.");
 }
