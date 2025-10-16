@@ -12,6 +12,7 @@ const PLAYER_Z_OFFSET: f32 = 0.1;
 const PLAYER_MOVE_SPEED: f32 = 500.0;
 const PLAYER_COLLIDER_SIZE: Vec2 = Vec2::new(48.0, 120.0);
 const PLAYER_JUMP_SPEED: f32 = 1200.0;
+const PLAYER_HEAD_TEXTURE_PATH: &str = "textures/lol.png";
 
 #[derive(Clone, Copy)]
 struct BodyPartSpec {
@@ -103,7 +104,11 @@ pub enum BodyPart {
     LegRight,
 }
 
-fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransitions>) {
+fn spawn(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut transitions: ResMut<UnfinishedStateTransitions>,
+) {
     transitions.add_one();
 
     let mut root = commands.spawn((
@@ -121,19 +126,35 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
         Grounded,
     ));
 
+    let head_texture = asset_server.load(PLAYER_HEAD_TEXTURE_PATH);
+
     root.with_children(|parent| {
         for (index, spec) in BODY_PART_SPECS.iter().enumerate() {
-            parent.spawn((
-                Name::new(format!("player-part-{}", index)),
-                PlayerBodyPart { kind: spec.kind },
-                Sprite::from_color(PLAYER_COLOR, spec.size),
-                Transform {
-                    translation: spec.offset,
-                    rotation: Quat::from_rotation_z(spec.rotation_radians),
-                    ..Default::default()
-                },
-                GlobalTransform::default(),
-            ));
+            let name = format!("player-part-{}", index);
+            match spec.kind {
+                BodyPart::Head => parent.spawn((
+                    Name::new(name),
+                    PlayerBodyPart { kind: spec.kind },
+                    Sprite::from_image(head_texture.clone()),
+                    Transform {
+                        translation: spec.offset,
+                        rotation: Quat::from_rotation_z(spec.rotation_radians),
+                        ..Default::default()
+                    },
+                    GlobalTransform::default(),
+                )),
+                _ => parent.spawn((
+                    Name::new(name),
+                    PlayerBodyPart { kind: spec.kind },
+                    Sprite::from_color(PLAYER_COLOR, spec.size),
+                    Transform {
+                        translation: spec.offset,
+                        rotation: Quat::from_rotation_z(spec.rotation_radians),
+                        ..Default::default()
+                    },
+                    GlobalTransform::default(),
+                )),
+            };
         }
     });
 
