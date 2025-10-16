@@ -90,6 +90,12 @@ fn expand_step_dispatch(input: DeriveInput) -> Result<proc_macro2::TokenStream> 
         impl #impl_generics crate::includes::TestStep for #ident #ty_generics #where_clause {
             #body
         }
+
+        impl #impl_generics ::std::fmt::Display for #ident #ty_generics #where_clause {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+                write!(f, "{}", ::std::any::type_name::<#ident>())
+            }
+        }
     };
 
     Ok(output)

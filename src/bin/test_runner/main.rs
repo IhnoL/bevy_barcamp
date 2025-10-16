@@ -43,10 +43,10 @@ fn setup_test_app(mut app: App, test_queue: TestStepQueue) -> App {
 fn send_step_from_queue(world: &mut World) {
     if world.resource::<UnfinishedSteps>().is_empty() {
         if let Some(step) = world.resource_mut::<TestStepQueue>().steps.pop_front() {
-            let step_id = std::any::Any::type_id(&*step);
-            world.resource_mut::<UnfinishedSteps>().add_type_id(step_id);
+            let step_name = step.to_string();
+            world.resource_mut::<UnfinishedSteps>().add(step_name.clone());
             step.send(world);
-            println!("Sent step from queue.",);
+            println!("Sent step from queue: {}", step_name);
         } else {
             println!("All tests completed!");
             std::process::exit(0);
