@@ -54,7 +54,7 @@ pub fn spawn(
             TerrainPiece,
             RigidBody::Static,
             Collider::rectangle(GROUND_SIZE.x, GROUND_SIZE.y),
-            Sprite::from_color(Color::srgb(0.4, 0.3, 0.2), GROUND_SIZE),
+            Sprite::from_color(Color::srgb(0.3, 0.9, 0.4), GROUND_SIZE),
             Transform::from_xyz(GROUND_X, GROUND_Y, 0.0),
             GlobalTransform::default(),
         ));
@@ -65,7 +65,7 @@ pub fn spawn(
                 TerrainPiece,
                 RigidBody::Static,
                 Collider::rectangle(PLATFORM_SIZE.x, PLATFORM_SIZE.y),
-                Sprite::from_color(Color::srgb(0.6, 0.6, 0.6), PLATFORM_SIZE),
+                Sprite::from_color(Color::srgb(0.7, 1.0, 0.7), PLATFORM_SIZE),
                 Transform::from_translation(*translation),
                 GlobalTransform::default(),
             ));

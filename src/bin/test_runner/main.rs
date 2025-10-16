@@ -8,7 +8,7 @@ use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
-use tests::{mob_test, player_test, teardown_test, terrain_test, TestsPlugin};
+use tests::{TestsPlugin, mob_test, player_test, teardown_test, terrain_test};
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -20,15 +20,17 @@ fn main() {
 
     test_queue.steps.push_back(step!(CaptureBaselineEntities));
     test_queue.steps.push_back(step!(StartGameStep));
+
     test_queue.steps.extend(terrain_test::provide_steps());
     test_queue.steps.extend(player_test::provide_steps());
     test_queue.steps.extend(mob_test::provide_steps());
     test_queue.steps.extend(jump_test::provide_steps());
     test_queue.steps.extend(movement_test::provide_steps());
+
     test_queue.steps.push_back(step!(QuitGameStep));
     test_queue.steps.extend(teardown_test::provide_steps());
 
-    let mut app = setup_test_app(bevy_barcamp::init(App::new()),test_queue );
+    let mut app = setup_test_app(bevy_barcamp::init(App::new()), test_queue);
     app.run();
 }
 
@@ -44,7 +46,9 @@ fn send_step_from_queue(world: &mut World) {
     if world.resource::<UnfinishedSteps>().is_empty() {
         if let Some(step) = world.resource_mut::<TestStepQueue>().steps.pop_front() {
             let step_name = step.to_string();
-            world.resource_mut::<UnfinishedSteps>().add(step_name.clone());
+            world
+                .resource_mut::<UnfinishedSteps>()
+                .add(step_name.clone());
             step.send(world);
             println!("Sent step from queue: {}", step_name);
         } else {

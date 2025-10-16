@@ -34,6 +34,9 @@ pub fn spawn(
         affects_lightmapped_meshes: true,
     });
 
+    // Set global clear color to a light blue background
+    commands.insert_resource(ClearColor(Color::srgb(0.70, 0.85, 1.0)));
+
     commands.spawn((
         Name::new("GameCamera"),
         GameCamera,
