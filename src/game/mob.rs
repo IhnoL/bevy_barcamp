@@ -100,9 +100,7 @@ fn spawn(
         for (index, spec) in MOB_LEG_SPECS.iter().enumerate() {
             parent.spawn((
                 Name::new(format!("mob-leg-{index}")),
-                MobBodyPart {
-                    kind: MobPart::Leg,
-                },
+                MobBodyPart { kind: MobPart::Leg },
                 Sprite::from_color(MOB_LEG_COLOR, spec.size),
                 Transform {
                     translation: spec.offset,

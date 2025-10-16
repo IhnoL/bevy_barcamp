@@ -20,7 +20,5 @@
 ## Jump-Test 
 - CapturePlayerPosition
 - JumpPlayer
-- WaitStep
-- VerifyPlayerIsInTheAir
-- WaitStep
-- VerifyPlayerIsAtCapturedPosition
+- VerifyPlayerIsInTheAir (reacts to `Grounded` removal)
+- VerifyPlayerIsAtCapturedPosition (reacts to `Grounded` addition)

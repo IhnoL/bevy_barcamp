@@ -69,7 +69,8 @@ impl Plugin for PlayerPlugin {
             .add_systems(OnEnter(GameState::Quitting), despawn)
             .add_systems(
                 Update,
-                apply_player_movement.run_if(in_state(GameState::Running)),
+                (apply_player_movement, refresh_grounded_status)
+                    .run_if(in_state(GameState::Running)),
             )
             .add_observer(on_move)
             .add_observer(on_jump);
@@ -88,6 +89,9 @@ pub struct PlayerBodyPart {
 struct PlayerMovement {
     direction: Direction,
 }
+
+#[derive(Component, Clone, Copy, Debug, Eq, PartialEq)]
+pub struct Grounded;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum BodyPart {
@@ -114,6 +118,7 @@ fn spawn(mut commands: Commands, mut transitions: ResMut<UnfinishedStateTransiti
         GlobalTransform::default(),
         Visibility::Visible,
         InheritedVisibility::default(),
+        Grounded,
     ));
 
     root.with_children(|parent| {
@@ -164,18 +169,15 @@ fn on_move(
     mut commands: Commands,
     mut player_query: Query<(Entity, &mut Transform), With<Player>>,
 ) {
-    let (player_entity, mut transform) =
-        player_query.iter_mut().next().expect("Player must exist");
+    let (player_entity, mut transform) = player_query.iter_mut().next().expect("Player must exist");
 
     if move_event.active {
         let direction = f32::from(move_event.direction);
         transform.translation.x += direction * PLAYER_MOVE_SPEED * 0.03;
 
-        commands
-            .entity(player_entity)
-            .insert(PlayerMovement {
-                direction: move_event.direction,
-            });
+        commands.entity(player_entity).insert(PlayerMovement {
+            direction: move_event.direction,
+        });
     } else {
         commands.entity(player_entity).remove::<PlayerMovement>();
     }
@@ -193,20 +195,34 @@ fn apply_player_movement(
 
 fn on_jump(
     _jump_event: On<PlayerJump>,
-    mut player_query: Query<(&CollidingEntities, &mut LinearVelocity), With<Player>>,
-    terrain_query: Query<(), With<TerrainPiece>>,
+    mut player_query: Query<(&mut LinearVelocity, Option<&Grounded>), With<Player>>,
 ) {
-    let (collisions, mut velocity) = player_query.iter_mut().next() .expect("Player must exist"); 
-    if player_is_grounded(collisions, &terrain_query) {
+    let (mut velocity, grounded) = player_query.iter_mut().next().expect("Player must exist");
+    if grounded.is_some() {
         velocity.y = PLAYER_JUMP_SPEED.max(velocity.y);
     }
 }
 
-fn player_is_grounded(
-    collisions: &CollidingEntities,
-    terrain_query: &Query<(), With<TerrainPiece>>,
-) -> bool {
-    collisions
+fn refresh_grounded_status(
+    mut commands: Commands,
+    player_query: Query<(Entity, &CollidingEntities, Option<&Grounded>), With<Player>>,
+    terrain_query: Query<(), With<TerrainPiece>>,
+) {
+    let Some((entity, collisions, grounded)) = player_query.iter().next() else {
+        return;
+    };
+
+    let grounded_now = collisions
         .iter()
-        .any(|entity| terrain_query.get(*entity).is_ok())
+        .any(|entity| terrain_query.get(*entity).is_ok());
+
+    match (grounded_now, grounded) {
+        (true, None) => {
+            commands.entity(entity).insert(Grounded);
+        }
+        (false, Some(_)) => {
+            commands.entity(entity).remove::<Grounded>();
+        }
+        _ => {}
+    }
 }

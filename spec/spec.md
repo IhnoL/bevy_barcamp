@@ -22,8 +22,10 @@
 ## Player(Plugin)
 - Owns Bevy-Component: Player
 - Interaction Events (e.g. Move) should only be received in GameState::Running
-- Is visualized by a stick man: Each body part (head, torso, arm_left, arm_right, leg_left, leg_right) is an independent line with common parent
+- Is visualized by a stick man: Each body part ( torso, arm_left, arm_right, leg_left, leg_right) is an independent line with common parent
+- The head is not a stick but a smiling face from  `assets/textures/lol.png`
 - later on each body part should be influenced by physics on each own but still stay attached to the torso
+- The player has a component "Grounded" which is removed when he jumps or falls and re-attached when grounded again
 
 # GameState transitions
 - Transitions are only allowed to the next state and must not jump or skip 
