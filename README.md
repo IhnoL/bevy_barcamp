@@ -17,5 +17,4 @@ We adopt Bevy 0.17's new separation between **events** and **messages**, which g
 - Architecture overview: [spec/architecture.mmd](spec/architecture.mmd)
 - Test architecture: [spec/test/test_architecture.mmd](spec/test/test_architecture.mmd)
 - Test event flow: [spec/test/test_event_flowchart.mmd](spec/test/test_event_flowchart.mmd)
-- Event system guide: [docs/events.md](docs/events.md)
 - Contributor guidelines: [AGENTS.md](AGENTS.md)

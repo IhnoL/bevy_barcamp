@@ -29,3 +29,6 @@ When you check the [image 683x384 PNG] there is a mob: How can we add this mob t
 
 ▌ Now create a test in the style of src/bin/test_runner/tests/player.rs which
 ▌ verifies the mob actually exists in the scene.
+
+Change the platforms in the game so that they are more in the places defined by the layout.png. Its important that there are large    
+enough gaps in between them so that the player fits through. Also add a wall right and left, so that you can not fall down.

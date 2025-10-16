@@ -2,15 +2,15 @@ use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
-const GROUND_SIZE: Vec2 = Vec2::new(800.0, 40.0);
+const GROUND_SIZE: Vec2 = Vec2::new(2500.0, 20.0);
 const GROUND_Y: f32 = -360.0;
+const GROUND_X: f32 = -500.0;
 const PLATFORM_SIZE: Vec2 = Vec2::new(140.0, 20.0);
-const PLATFORM_POSITIONS: [Vec3; 5] = [
-    Vec3::new(-260.0, -120.0, 0.1),
-    Vec3::new(-80.0, -20.0, 0.1),
-    Vec3::new(120.0, -60.0, 0.1),
+const PLATFORM_POSITIONS: [Vec3; 4] = [
+    Vec3::new(-200.0, -20.0, 0.1),
+    Vec3::new(0.0, -60.0, 0.1),
     Vec3::new(200.0, 40.0, 0.1),
-    Vec3::new(-40.0, 120.0, 0.1),
+    Vec3::new(-140.0, 120.0, 0.1),
 ];
 
 #[derive(Default)]
@@ -24,7 +24,7 @@ pub struct TerrainPiece;
 
 impl Plugin for TerrainPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Running), spawn)
+        app.add_systems(OnEnter(GameState::Initializing), spawn)
             .add_systems(OnEnter(GameState::Quitting), despawn);
     }
 }
@@ -56,7 +56,7 @@ pub fn spawn(
             RigidBody::Static,
             Collider::rectangle(GROUND_SIZE.x, GROUND_SIZE.y),
             Sprite::from_color(Color::srgb(0.4, 0.3, 0.2), GROUND_SIZE),
-            Transform::from_xyz(0.0, GROUND_Y, 0.0),
+            Transform::from_xyz(GROUND_X, GROUND_Y, 0.0),
             GlobalTransform::default(),
         ));
 

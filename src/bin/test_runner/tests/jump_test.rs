@@ -20,7 +20,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
         }),
         step!(VerifyPlayerIsInTheAir),
         step!(WaitStep {
-            updates: 50
+            updates:120
         }),
         step!(VerifyPlayerIsAtCapturedPosition),
     ]
