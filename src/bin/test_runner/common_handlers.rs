@@ -1,4 +1,4 @@
-use crate::events::{CapturePlayerPosition, WaitStep, StartGameStep, QuitGameStep};
+use crate::events::{CapturePlayerPosition, QuitGameStep, StartGameStep, WaitStep};
 use crate::includes::*;
 use bevy::prelude::*;
 pub fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {

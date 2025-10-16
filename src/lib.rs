@@ -3,7 +3,7 @@ pub mod game;
 use crate::game::game_controller::GameControllerPlugin;
 use avian2d::prelude::{Gravity, PhysicsPlugins};
 use bevy::app::PluginGroup;
-use bevy::prelude::{App, DefaultPlugins, Vec2, Window, WindowPlugin, default};
+use bevy::prelude::{default, App, DefaultPlugins, Vec2, Window, WindowPlugin};
 use bevy::state::app::AppExtStates;
 use bevy::window::PresentMode;
 use game::includes::state::GameState;

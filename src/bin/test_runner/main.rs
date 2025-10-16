@@ -8,7 +8,7 @@ use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
-use tests::{TestsPlugin, mob_test, player_test, teardown_test, terrain_test};
+use tests::{mob_test, player_test, teardown_test, terrain_test, TestsPlugin};
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -57,9 +57,9 @@ fn send_step_from_queue(world: &mut World) {
 #[cfg(test)]
 mod queue_tests {
     use super::*;
-    use bevy_barcamp::game::includes::state::GameState;
     use bevy::prelude::NextState;
     use bevy::state::app::StatesPlugin;
+    use bevy_barcamp::game::includes::state::GameState;
 
     #[test]
     fn test_queue_processes_steps_sequentially() {

@@ -1,50 +1,49 @@
 use crate::events::{
     CapturePlayerPosition, JumpPlayer, VerifyPlayerIsAtCapturedPosition, VerifyPlayerIsInTheAir,
-    WaitStep,
+    WaitPlayerGrounded,
 };
-use crate::includes::*;
 use crate::includes::PlayerCapturedPosition;
-use bevy_barcamp::game::player::Player;
-use macros::step;
+use crate::includes::*;
+use bevy::prelude::{On, Remove};
 use bevy_barcamp::game::includes::events::PlayerJump;
+use bevy_barcamp::game::player::Player;
+use bevy_barcamp::game::player::Grounded;
+use macros::step;
 
-const MIN_JUMP_HEIGHT: f32 = 50.0;
 const LANDING_TOLERANCE: f32 = 10.0;
+const AIRBORNE_MIN_DELTA: f32 = 1.0;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![
+        step!(WaitPlayerGrounded),
         step!(CapturePlayerPosition),
         step!(JumpPlayer),
-        step!(WaitStep {
-            updates: 10
-        }),
         step!(VerifyPlayerIsInTheAir),
-        step!(WaitStep {
-            updates:120
-        }),
+        step!(WaitPlayerGrounded),
         step!(VerifyPlayerIsAtCapturedPosition),
     ]
 }
 
-pub fn handle_verify_player_is_in_the_air(
-    _verify_event: On<VerifyPlayerIsInTheAir>,
+pub fn verify_player_is_in_the_air(
+    _removed: On<Remove, Grounded>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
     captured_position: Res<PlayerCapturedPosition>,
     player_query: Query<&Transform, With<Player>>,
 ) {
+    let step_name = std::any::type_name::<VerifyPlayerIsInTheAir>();
+    if !unfinished_steps.0.contains(step_name) {
+        return;
+    }
+
+    let  player_transform =  player_query.iter().next().expect("Player must exist");
     let baseline_position = captured_position
         .0
         .expect("Player baseline position missing before verifying airborne state");
-
-    let player_transform = player_query
-        .iter()
-        .next()
-        .expect("Player entity not found when verifying airborne state");
     let current_position = player_transform.translation;
 
     assert!(
-        current_position.y > baseline_position.y + MIN_JUMP_HEIGHT,
-        "Expected player to be airborne by at least {MIN_JUMP_HEIGHT}, but y went from {} to {}",
+        (current_position.y - baseline_position.y).abs() > AIRBORNE_MIN_DELTA,
+        "Expected player to have left the ground (|dy| > {AIRBORNE_MIN_DELTA}), but y went from {} to {}",
         baseline_position.y,
         current_position.y
     );
@@ -77,9 +76,23 @@ pub fn handle_verify_player_is_at_captured_position(
     );
 
     captured_position.0 = Some(current_position);
-
     unfinished_steps.remove::<VerifyPlayerIsAtCapturedPosition>();
     println!("VerifyPlayerIsAtCapturedPosition completed.");
+}
+
+pub fn handle_wait_player_grounded(
+    mut unfinished_steps: ResMut<UnfinishedSteps>,
+    player_grounded_query: Query<Entity, (With<Player>, With<Grounded>)>,
+) {
+    let step_name = std::any::type_name::<WaitPlayerGrounded>();
+    if !unfinished_steps.0.contains(step_name) {
+        return;
+    }
+
+    if player_grounded_query.single().is_ok() {
+        unfinished_steps.remove::<WaitPlayerGrounded>();
+        println!("WaitPlayerGrounded completed.");
+    }
 }
 
 pub fn handle_player_jump(

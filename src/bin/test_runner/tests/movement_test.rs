@@ -1,7 +1,6 @@
 use crate::events::{CapturePlayerPosition, TriggerPlayerMove, VerifyPlayerMoved, WaitStep};
 use crate::includes::*;
 use bevy_barcamp::game::includes::events::{Direction, PlayerMove};
-use bevy_barcamp::game::includes::state::GameState;
 use bevy_barcamp::game::player::Player;
 use macros::step;
 

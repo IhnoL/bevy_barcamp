@@ -6,11 +6,10 @@ const GROUND_SIZE: Vec2 = Vec2::new(2500.0, 20.0);
 const GROUND_Y: f32 = -360.0;
 const GROUND_X: f32 = -500.0;
 const PLATFORM_SIZE: Vec2 = Vec2::new(140.0, 20.0);
-const PLATFORM_POSITIONS: [Vec3; 4] = [
-    Vec3::new(-200.0, -20.0, 0.1),
-    Vec3::new(0.0, -60.0, 0.1),
+const PLATFORM_POSITIONS: [Vec3; 3] = [
+    Vec3::new(-200.0, 80.0, 0.1),
+    Vec3::new(0.0, -150.0, 0.1),
     Vec3::new(200.0, 40.0, 0.1),
-    Vec3::new(-140.0, 120.0, 0.1),
 ];
 
 #[derive(Default)]

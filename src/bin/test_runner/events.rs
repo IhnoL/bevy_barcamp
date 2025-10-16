@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_barcamp::game::includes::events::{Direction, QuitGame, StartGame, PlayerJump};
+use bevy_barcamp::game::includes::events::{Direction, PlayerJump, QuitGame, StartGame};
 
 use macros::TestStep;
 
@@ -21,6 +21,9 @@ pub struct CaptureBaselineEntities;
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct CapturePlayerPosition;
+
+#[derive(Clone, Event, TestStep)]
+pub struct WaitPlayerGrounded;
 
 #[derive(Clone, Event, Message, TestStep)]
 #[step_dispatch(event = PlayerJump)]
