@@ -4,11 +4,11 @@ mod includes;
 mod tests;
 use crate::tests::{jump_test, movement_test};
 use bevy::prelude::*;
-use events::{CaptureBaselineEntities, QuitGameStep, StartGameStep};
+use events::{CaptureBaselineEntities, GenerateScreenshot, QuitGameStep, StartGameStep, WaitStep};
 use includes::*;
 use macros::step;
 use std::collections::VecDeque;
-use tests::{TestsPlugin, mob_test, player_test, teardown_test, terrain_test};
+use tests::{mob_test, player_test, teardown_test, terrain_test, TestsPlugin};
 
 #[derive(Default, Resource)]
 pub struct TestStepQueue {
@@ -16,10 +16,19 @@ pub struct TestStepQueue {
 }
 
 fn main() {
+    // CLI flag to control reference regeneration
+    let should_generate_reference_screenshots = std::env::args()
+        .any(|a| a == "--reference-screenshots");
+
     let mut test_queue = TestStepQueue::default();
 
     test_queue.steps.push_back(step!(CaptureBaselineEntities));
     test_queue.steps.push_back(step!(StartGameStep));
+    test_queue.steps.push_back(step!(WaitStep { updates: 30 }));
+    test_queue.steps.push_back(step!(GenerateScreenshot {
+        name: "after_start".to_string(),
+        is_reference: should_generate_reference_screenshots
+    }));
 
     test_queue.steps.extend(terrain_test::provide_steps());
     test_queue.steps.extend(player_test::provide_steps());

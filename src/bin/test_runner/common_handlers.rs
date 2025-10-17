@@ -1,6 +1,8 @@
-use crate::events::{CapturePlayerPosition, QuitGameStep, StartGameStep, WaitStep};
+use crate::events::{CapturePlayerPosition, GenerateScreenshot, QuitGameStep, StartGameStep, WaitStep};
 use crate::includes::*;
 use bevy::prelude::*;
+use bevy::render::view::screenshot::{save_to_disk, Screenshot};
+use std::path::Path;
 pub fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
     unfinished_steps.remove::<StartGameStep>();
     println!("StartGameStep completed.");
@@ -45,4 +47,28 @@ pub fn handle_capture_player_position(
 
     unfinished_steps.remove::<CapturePlayerPosition>();
     println!("CapturePlayerPosition completed.");
+}
+
+pub fn handle_generate_screenshot(
+    screenshot_step: On<GenerateScreenshot>,
+    mut commands: Commands,
+    mut unfinished_steps: ResMut<UnfinishedSteps>,
+)
+{
+    let base = Path::new("src")
+        .join("bin")
+        .join("test_runner")
+        .join("screenshots");
+    let dir = if screenshot_step.is_reference{ base.join("reference") } else { base.join("last_test") };
+    let path = dir.join(format!("{}.png", screenshot_step.name));
+    if let Some(parent) = Path::new(&path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+
+    commands
+        .spawn(Screenshot::primary_window())
+        .observe(save_to_disk(path));
+
+    unfinished_steps.remove::<GenerateScreenshot>();
+    println!("GenerateScreenshot completed.");
 }

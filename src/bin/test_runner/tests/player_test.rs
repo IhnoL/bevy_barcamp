@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-use bevy_barcamp::game::includes::state::GameState;
 use bevy_barcamp::game::player::{BodyPart, Player, PlayerBodyPart};
 
 use crate::events::VerifyPlayerSpawned;

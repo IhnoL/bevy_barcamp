@@ -1,20 +1,21 @@
 # bevy_barcamp
 
-This project is built with [Rust](https://www.rust-lang.org/learn/get-started) and powered by [Bevy 0.17](https://bevyengine.org/learn/book/getting-started/), the latest release of the engine. New contributors should also read the [contributor guidelines](AGENTS.md) to stay aligned with the project's workflows.
+This project is built with [Rust](https://www.rust-lang.org/learn/get-started) and powered by [Bevy 0.17](https://bevy.org/learn/quick-start/introduction/), the latest release of the engine. 
+It can be used as a reference implementation for an effective Vibe-Coding environment to develop a game.
+Focus is to have a strong Testing-Infrastructure, so that the AI-Coding Agent is able to test the game on its own without user validation on each step.
 
 ## Getting Started
 
 - Install the Rust toolchain by following the official setup guide linked above.
+- Install the Programming environment of your choice. Recommended: RustRover, VSCode or Vibe-IDEs like Cursor
 - Run `cargo run` from the repository root to launch the application.
 - Run `cargo run --bin test_runner` to execute the automated test suite.
-
-## Bevy 0.17 Events and Messages
-
-We adopt Bevy 0.17's new separation between **events** and **messages**, which gives us static guarantees about how observers run and prevents misuse of the APIs. Every event now specifies an associated trigger, and targeted entity events derive from `EntityEvent`.
+- Generate reference screenshots: `cargo run --bin test_runner -- --reference-screenshots`
+- Install a Vibe-Coding Tool of your choice. Recommended: Claude-Code, Codex
 
 ## Documentation
 
 - Architecture overview: [spec/architecture.mmd](spec/architecture.mmd)
 - Test architecture: [spec/test/test_architecture.mmd](spec/test/test_architecture.mmd)
 - Test event flow: [spec/test/test_event_flowchart.mmd](spec/test/test_event_flowchart.mmd)
-- Contributor guidelines: [AGENTS.md](AGENTS.md)
+- Agents context: [AGENTS.md](AGENTS.md)

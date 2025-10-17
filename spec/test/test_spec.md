@@ -5,6 +5,7 @@
 - Each of the tests (e.g. movement) is it its own module and has a method "provide_steps()" that returns the test-steps 
 - The MovementStepHandler and the test-steps declared are also located in this module 
 - An "includes" module declares the generally used dependencies for the tests
+- There exists a GenerateScreenshot() step to generate screenshots during tests
 
 ## Movement-Test 
 - CapturePlayerPosition
@@ -16,6 +17,9 @@
 
 ## Terrain-Test
 - VerifyTerrainSpawned()
+
+## Player-Test
+- VerifyPlayerSpawned()
 
 ## Jump-Test 
 - CapturePlayerPosition

@@ -30,3 +30,4 @@ When you check the [image 683x384 PNG] there is a mob: How can we add this mob t
 ▌ Now create a test in the style of src/bin/test_runner/tests/player.rs which
 ▌ verifies the mob actually exists in the scene.
 
+Can you make the terrain and background in shiny bright colors? Light green and similar. Its so brown and boring

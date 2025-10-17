@@ -56,3 +56,9 @@ pub struct VerifyMobSpawned;
 
 #[derive(Clone, Event, Message, TestStep)]
 pub struct VerifyEntitiesDespawned;
+
+#[derive(Clone, Event, TestStep)]
+pub struct GenerateScreenshot {
+    pub name: String,
+    pub is_reference: bool,
+}

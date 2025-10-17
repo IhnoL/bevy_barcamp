@@ -2,7 +2,6 @@ use bevy_barcamp::game::terrain::{TerrainPiece, TerrainRoot};
 
 use crate::events::VerifyTerrainSpawned;
 use crate::includes::*;
-use bevy_barcamp::game::includes::state::GameState;
 use macros::step;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {

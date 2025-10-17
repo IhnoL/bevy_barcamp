@@ -6,7 +6,9 @@ Specification is stored in `spec/`.
 
 ## Build, Test, and Development Commands
 Run `cargo run` from the repository root to launch the Bevy prototype.
-Run `cargo run --bin test_runner` to execute the tests after each change.
+Run `cargo run --bin test_runner` to execute the tests after each change !!!
+To regenerate reference screenshots used by image comparisons, run:
+`cargo run --bin test_runner -- --reference-screenshots`
 
 ## Testing Guidelines - Implementing Tests
 Always read `src/bin/test_runner/main.rs` before implementing tests. 
