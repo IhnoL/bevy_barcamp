@@ -1,16 +1,15 @@
 %% High-level relationships remain for context
 classDiagram
+    direction TB
     class TestController {
         run_tests()
         queue: TestQueue
     }
     class MovementTest {
         provide_steps()
-    }
-    class MovementStepHandler {
-        capture_player_position()
-        send_move_event()
-        verify_player_moved()
+        handle_capture_player_position()
+        handle_move_player()
+        handle_verify_player_moved()
     }
     class TestStep {
         <<trait>>
@@ -18,14 +17,23 @@ classDiagram
     class CapturePlayerPosition {
         <<event>>
     }
+    class MovePlayer {
+        <<event>>
+    }
+    class VerifyPlayerMoved {
+        <<event>>
+    }
     class UnfinishedSteps {
         <<resource>>
-        increase()
         decrease()
     }
 
     TestController --> MovementTest
     TestController --> CapturePlayerPosition
-    CapturePlayerPosition --|> TestStep
-    CapturePlayerPosition ..> MovementStepHandler
-    MovementStepHandler --> UnfinishedSteps
+    TestStep <|-- CapturePlayerPosition
+    TestStep <|-- MovePlayer
+    TestStep <|-- VerifyPlayerMoved
+    CapturePlayerPosition ..> MovementTest
+    MovePlayer ..> MovementTest
+    VerifyPlayerMoved ..> MovementTest
+    MovementTest --> UnfinishedSteps

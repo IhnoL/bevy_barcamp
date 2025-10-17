@@ -1,6 +1,7 @@
 %% Mermaid class diagram
 classDiagram
-    class GameController{
+    class GameController {
+        advance_state()
     }
     class Terrain {
         spawn()
@@ -14,9 +15,11 @@ classDiagram
         spawn()
         despawn()
         on_move()
+        on_jump()
     }
     class Interaction {
-        move_player()
+        player_move()
+        player_jump()
     }
     class GameState {
         <<state>>

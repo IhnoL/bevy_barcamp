@@ -1,19 +1,19 @@
 flowchart TD
     Run["run_tests()"]
-    Start["add start game step"]
-    AddMovement["add movement_test calling provide_steps()"]
-    Quit["add quit game step"]
-    Repeat[".. repeat above for each test .."]
+    Start["Add start game step"]
+    AddMovement["Add movement_test by calling provide_steps()"]
+    Quit["Add quit game step"]
+    Repeat["Repeat for each test .."]
     UnfinishedSteps{"UnfinishedSteps == 0 ?"}
     Send["send_step_from_queue()"]
     Update["Update() - loop"]
     IncreaseUnfinished["UnfinishedSteps ++"]
     DecreaseUnfinished["UnfinishedSteps --"]
     ExecuteStep["execute_step()"]
-    UnfinishedSteps{"Steps  waiting ?"}
+    UnfinishedSteps{"Unfinished Steps ?"}
 
-    Run -->  Start --> AddMovement --> Quit --> Repeat --> Update
-    Update --> UnfinishedSteps
+    Run -->  Start --> AddMovement -->  Repeat --> Quit --> Update
+    UnfinishedSteps --> Update
     Update --> UnfinishedSteps -- Yes--> ExecuteStep --> DecreaseUnfinished
 
-    UnfinishedSteps -- Yes -->   Send --> IncreaseUnfinished
+    UnfinishedSteps -- No -->   Send --> IncreaseUnfinished
