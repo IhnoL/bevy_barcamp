@@ -1,6 +1,5 @@
 use bevy::prelude::Resource;
 use derive_getters::Getters;
-
 use crate::game::includes::state::GameState;
 
 #[derive(Default, Resource, Getters)]

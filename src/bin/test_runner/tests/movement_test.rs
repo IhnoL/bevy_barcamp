@@ -1,8 +1,8 @@
 use crate::events::{CapturePlayerPosition, TriggerPlayerMove, VerifyPlayerMoved, WaitStep};
 use crate::includes::*;
+use macros::step;
 use bevy_barcamp::game::includes::events::{Direction, PlayerMove};
 use bevy_barcamp::game::player::Player;
-use macros::step;
 
 const MIN_MOVEMENT_DELTA: f32 = 20.0;
 

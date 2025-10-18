@@ -1,5 +1,4 @@
 use bevy::prelude::App;
-
 use bevy_barcamp::game::includes::events::StartGame;
 
 fn main() {

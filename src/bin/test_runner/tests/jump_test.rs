@@ -5,10 +5,9 @@ use crate::events::{
 use crate::includes::PlayerCapturedPosition;
 use crate::includes::*;
 use bevy::prelude::{On, Remove};
-use bevy_barcamp::game::includes::events::PlayerJump;
-use bevy_barcamp::game::player::Grounded;
-use bevy_barcamp::game::player::Player;
 use macros::step;
+use bevy_barcamp::game::includes::events::PlayerJump;
+use bevy_barcamp::game::player::{Grounded, Player};
 
 const LANDING_TOLERANCE: f32 = 10.0;
 const AIRBORNE_MIN_DELTA: f32 = 1.0;

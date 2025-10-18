@@ -1,7 +1,8 @@
-use crate::game::includes::resources::UnfinishedStateTransitions;
-use crate::game::includes::state::GameState;
 use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
+use crate::game::includes::resources::UnfinishedStateTransitions;
+use crate::game::includes::state::GameState;
+
 const GROUND_SIZE: Vec2 = Vec2::new(2500.0, 20.0);
 const GROUND_Y: f32 = -360.0;
 const GROUND_X: f32 = -500.0;

@@ -1,8 +1,7 @@
-use bevy_barcamp::game::mob::{Mob, MobBodyPart, MobPart};
-
 use crate::events::VerifyMobSpawned;
 use crate::includes::*;
 use macros::step;
+use bevy_barcamp::game::mob::{Mob, MobBodyPart, MobPart};
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![step!(VerifyMobSpawned)]

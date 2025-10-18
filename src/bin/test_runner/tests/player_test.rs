@@ -1,10 +1,9 @@
 use std::collections::HashSet;
 
-use bevy_barcamp::game::player::{BodyPart, Player, PlayerBodyPart};
-
 use crate::events::VerifyPlayerSpawned;
 use crate::includes::*;
 use macros::step;
+use bevy_barcamp::game::player::{BodyPart, Player, PlayerBodyPart};
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![step!(VerifyPlayerSpawned)]

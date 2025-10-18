@@ -1,6 +1,5 @@
 use avian2d::prelude::{Collider, CollidingEntities, LinearVelocity, LockedAxes, RigidBody};
 use bevy::prelude::*;
-
 use crate::game::includes::events::{Direction, PlayerJump, PlayerMove};
 use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;

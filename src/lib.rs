@@ -1,14 +1,14 @@
 pub mod game;
 pub mod mcp;
 
-use crate::game::game_controller::GameControllerPlugin;
 use crate::mcp::McpPlugin;
 use avian2d::prelude::{Gravity, PhysicsPlugins};
 use bevy::app::PluginGroup;
 use bevy::prelude::{default, App, DefaultPlugins, Vec2, Window, WindowPlugin};
 use bevy::state::app::AppExtStates;
 use bevy::window::PresentMode;
-use game::includes::state::GameState;
+use crate::game::game_controller::GameControllerPlugin;
+use crate::game::includes::state::GameState;
 
 /// Configures the base Bevy app with the standard plugin stack for runtime and a minimal one during tests.
 pub fn init(mut app: App) -> App {

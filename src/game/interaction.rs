@@ -1,7 +1,6 @@
 use bevy::input::keyboard::KeyCode;
 use bevy::input::ButtonInput;
 use bevy::prelude::*;
-
 use crate::game::includes::events::{Direction, PlayerJump, PlayerMove};
 use crate::game::includes::state::GameState;
 

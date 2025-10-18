@@ -3,6 +3,8 @@ use crate::includes::*;
 use bevy::prelude::*;
 use bevy::render::view::screenshot::{save_to_disk, Screenshot};
 use std::path::Path;
+use bevy_barcamp::game::player::Player;
+
 pub fn handle_start_game(mut unfinished_steps: ResMut<UnfinishedSteps>) {
     unfinished_steps.remove::<StartGameStep>();
     println!("StartGameStep completed.");
@@ -36,7 +38,7 @@ pub fn process_wait_cycles(
 pub fn handle_capture_player_position(
     _capture_event: On<CapturePlayerPosition>,
     mut unfinished_steps: ResMut<UnfinishedSteps>,
-    player_query: Query<&Transform, With<bevy_barcamp::game::player::Player>>,
+    player_query: Query<&Transform, With<Player>>,
     mut captured_position: ResMut<PlayerCapturedPosition>,
 ) {
     let mut player_iter = player_query.iter();
