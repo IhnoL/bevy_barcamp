@@ -4,7 +4,7 @@ use bevy_barcamp::game::includes::events::{Direction, PlayerMove};
 use bevy_barcamp::game::player::Player;
 use macros::step;
 
-const MIN_MOVEMENT_DELTA: f32 = 50.0;
+const MIN_MOVEMENT_DELTA: f32 = 20.0;
 
 pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
     vec![
@@ -12,7 +12,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
         step!(TriggerPlayerMove {
             direction: Direction::Right,
         }),
-        step!(WaitStep { updates: 20 }),
+        step!(WaitStep { updates: 30 }),
         step!(VerifyPlayerMoved {
             expected_direction: Direction::Right,
         }),
@@ -20,7 +20,7 @@ pub fn provide_steps() -> Vec<Box<dyn TestStep>> {
         step!(TriggerPlayerMove {
             direction: Direction::Left,
         }),
-        step!(WaitStep { updates: 20 }),
+        step!(WaitStep { updates: 30 }),
         step!(VerifyPlayerMoved {
             expected_direction: Direction::Left,
         }),

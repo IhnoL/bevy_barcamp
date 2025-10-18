@@ -21,3 +21,7 @@ Before implementing any changes always check the spec/architecture.mmd and spec/
 Work Test-Driven if possible. 
 Implement the functional tests in `src/bin/test_runner/` first.
 For more complex algorithms also implement unit tests but not for simple code that is already tested by the functional test.
+
+## MCP Control Notes
+- Queue actions via `world.insert_resources` with `{"actions":["StartGame"]}` or `{"actions":[{"Move":{"direction":"Right","state":"Pressed"}}]}`; queue drains each frame.
+- Player position isn’t reflected, so rely on screenshots or expose components if numeric checks are needed.

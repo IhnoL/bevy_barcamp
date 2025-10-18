@@ -37,3 +37,7 @@
 - Initializing: Entities are spawning
 - Running: Entities are spawned and ready to use
 - Quitting: Entities are despawning
+
+## MCP Integration
+- The game will expose Bevy Remote Protocol support (`RemotePlugin`, `BrpExtrasPlugin`) so external MCP servers such as `bevy_brp_mcp` can drive gameplay features. 
+- All remote operations must continue to flow through Bevy-safe ECS interfaces (commands, resources) to avoid unsafe world access.

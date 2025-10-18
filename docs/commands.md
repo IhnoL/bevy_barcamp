@@ -31,3 +31,8 @@ When you check the [image 683x384 PNG] there is a mob: How can we add this mob t
 ▌ verifies the mob actually exists in the scene.
 
 Can you make the terrain and background in shiny bright colors? Light green and similar. Its so brown and boring
+
+I want to have an mcp server running inside of the game which allows the ai coding
+agent (you) to interact better which the game. E.g. taking screenshots. Lets
+develop a plan for this without any code yet. How can we achieve this? Suggest some
+solution possibilities

@@ -24,7 +24,7 @@ fn main() {
 
     test_queue.steps.push_back(step!(CaptureBaselineEntities));
     test_queue.steps.push_back(step!(StartGameStep));
-    test_queue.steps.push_back(step!(WaitStep { updates: 30 }));
+    test_queue.steps.push_back(step!(WaitStep { updates: 20 }));
     test_queue.steps.push_back(step!(GenerateScreenshot {
         name: "after_start".to_string(),
         is_reference: should_generate_reference_screenshots

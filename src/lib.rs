@@ -1,6 +1,8 @@
 pub mod game;
+pub mod mcp;
 
 use crate::game::game_controller::GameControllerPlugin;
+use crate::mcp::McpPlugin;
 use avian2d::prelude::{Gravity, PhysicsPlugins};
 use bevy::app::PluginGroup;
 use bevy::prelude::{default, App, DefaultPlugins, Vec2, Window, WindowPlugin};
@@ -23,6 +25,7 @@ pub fn init(mut app: App) -> App {
         PhysicsPlugins::default(),
     ))
     .insert_resource(Gravity(Vec2::NEG_Y * GRAVITY))
+    .add_plugins(McpPlugin)
     .add_plugins(GameControllerPlugin)
     .init_state::<GameState>();
     app

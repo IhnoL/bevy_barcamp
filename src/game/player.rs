@@ -6,7 +6,7 @@ use crate::game::includes::resources::UnfinishedStateTransitions;
 use crate::game::includes::state::GameState;
 use crate::game::terrain::TerrainPiece;
 
-const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -200.0, 0.2);
+const PLAYER_POSITION: Vec3 = Vec3::new(-320.0, -250.0, 0.2);
 const PLAYER_COLOR: Color = Color::srgb(0.1, 0.1, 0.1);
 const PLAYER_Z_OFFSET: f32 = 0.1;
 const PLAYER_MOVE_SPEED: f32 = 500.0;

@@ -1,17 +1,19 @@
 # bevy_barcamp
 
-This project is built with [Rust](https://www.rust-lang.org/learn/get-started) and powered by [Bevy 0.17](https://bevy.org/learn/quick-start/introduction/), the latest release of the engine. 
-It can be used as a reference implementation for an effective Vibe-Coding environment to develop a game.
-Focus is to have a strong Testing-Infrastructure, so that the AI-Coding Agent is able to test the game on its own without user validation on each step.
+This project uses [Rust](https://www.rust-lang.org/learn/get-started) and [Bevy 0.17](https://bevy.org/learn/quick-start/introduction/) as a reference implementation for an AI-assisted game development workflow with an emphasis on automated testing.
 
 ## Getting Started
 
 - Install the Rust toolchain by following the official setup guide linked above.
-- Install the Programming environment of your choice. Recommended: RustRover, VSCode or Vibe-IDEs like Cursor
-- Run `cargo run` from the repository root to launch the application.
-- Run `cargo run --bin test_runner` to execute the automated test suite.
-- Generate reference screenshots: `cargo run --bin test_runner -- --reference-screenshots`
-- Install a Vibe-Coding Tool of your choice. Recommended: Claude-Code, Codex
+- Launch the game: `cargo run`.
+- Run the functional tests: `cargo run --bin test_runner`.
+- Refresh screenshot references when required: `cargo run --bin test_runner -- --reference-screenshots`.
+
+## MCP / BRP Access
+
+- Install the MCP server once: `cargo install bevy_brp_mcp`.
+- Register it with Codex (or compatible tooling): `codex mcp add bevy-brp -- bevy_brp_mcp`.
+- Run the game (`cargo run`) to expose the Bevy Remote Protocol with `RemotePlugin` and `BrpExtrasPlugin` enabled.
 
 ## Documentation
 
