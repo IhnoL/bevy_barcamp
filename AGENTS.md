@@ -23,5 +23,6 @@ Implement the functional tests in `src/bin/test_runner/` first.
 For more complex algorithms also implement unit tests but not for simple code that is already tested by the functional test.
 
 ## MCP Control Notes
-- Queue `McpActionQueue.actions` via `world.insert_resources` (e.g. `{"actions":["StartGame"]}` or `{"actions":[{"Move":{"direction":"Right","state":"Pressed"}}]}`); queue drains each frame.
+- Full walkthrough: `docs/mcp_control_guide.md`
+- Queue `McpActionQueue.actions` via `world.insert_resources` (e.g. `{"actions":["StartGame"]}` or `{"actions":[{"Move":{"direction":"Right","steps":10}}]}`); queue drains each frame and move steps default to 10.
 - Request `GetGameStatus` to refresh `McpWorldState`, then read player position, ground bounds, platform centers, mob position, and current game state.

@@ -1,20 +1,23 @@
-use bevy::prelude::*;
 use crate::game::includes::events::{Direction, PlayerJump, PlayerMove, QuitGame, StartGame};
 use crate::game::includes::state::GameState;
 use crate::game::mob::Mob;
 use crate::game::player::Player;
 use crate::game::terrain::TerrainPiece;
+use bevy::prelude::*;
+use std::collections::VecDeque;
 
 /// Remote action queue that BRP clients can populate to trigger gameplay events.
 #[derive(Resource, Reflect, Default, Debug)]
-#[reflect(Resource)]
+#[reflect(Resource, Default)]
 pub struct McpActionQueue {
     pub actions: Vec<McpAction>,
+    #[reflect(ignore)]
+    internal: VecDeque<InternalAction>,
 }
 
 /// Latest world information snapshot populated by MCP query actions.
 #[derive(Resource, Reflect, Default, Debug)]
-#[reflect(Resource)]
+#[reflect(Resource, Default)]
 pub struct McpWorldState {
     pub player_position: Option<Vec3>,
     pub game_bounds: Option<McpGameBounds>,
@@ -43,7 +46,7 @@ pub enum McpAction {
 #[derive(Reflect, Clone, Debug)]
 pub struct McpMoveAction {
     pub direction: McpMoveDirection,
-    pub state: McpButtonState,
+    pub steps: Option<u32>,
 }
 
 #[derive(Reflect, Clone, Copy, Debug)]
@@ -52,11 +55,13 @@ pub enum McpMoveDirection {
     Right,
 }
 
-#[derive(Reflect, Clone, Copy, Debug)]
-pub enum McpButtonState {
-    Pressed,
-    Released,
+#[derive(Clone, Debug)]
+enum InternalAction {
+    PlayerMove { direction: Direction, active: bool },
+    Wait,
 }
+
+const DEFAULT_MOVE_STEPS: u32 = 10;
 
 pub fn consume_actions(
     mut queue: ResMut<McpActionQueue>,
@@ -67,33 +72,60 @@ pub fn consume_actions(
     mob_query: Query<&Transform, With<Mob>>,
     game_state: Res<State<GameState>>,
 ) {
+    if let Some(internal_action) = queue.internal.pop_front() {
+        match internal_action {
+            InternalAction::PlayerMove { direction, active } => {
+                commands.trigger(PlayerMove { direction, active });
+            }
+            InternalAction::Wait => {}
+        }
+        return;
+    }
+
     if queue.actions.is_empty() {
         return;
     }
 
-    for action in queue.actions.drain(..) {
-        match action {
-            McpAction::StartGame => commands.trigger(StartGame),
-            McpAction::StopGame => commands.trigger(QuitGame),
-            McpAction::Jump => commands.trigger(PlayerJump),
-            McpAction::Move(move_action) => {
-                let direction = match move_action.direction {
-                    McpMoveDirection::Left => Direction::Left,
-                    McpMoveDirection::Right => Direction::Right,
-                };
+    let action = queue.actions.remove(0);
 
-                let active = matches!(move_action.state, McpButtonState::Pressed);
-                commands.trigger(PlayerMove { direction, active });
+    match action {
+        McpAction::StartGame => commands.trigger(StartGame),
+        McpAction::StopGame => commands.trigger(QuitGame),
+        McpAction::Jump => commands.trigger(PlayerJump),
+        McpAction::Move(move_action) => {
+            let direction = match move_action.direction {
+                McpMoveDirection::Left => Direction::Left,
+                McpMoveDirection::Right => Direction::Right,
+            };
+
+            let steps = move_action.steps.unwrap_or(DEFAULT_MOVE_STEPS).max(1);
+            commands.trigger(PlayerMove {
+                direction,
+                active: true,
+            });
+
+            let wait_frames = steps.saturating_sub(1);
+            for _ in 0..wait_frames {
+                queue.internal.push_back(InternalAction::Wait);
             }
-            McpAction::GetGameStatus => {
-                world_state.player_position =
-                    player_query.iter().next().map(|transform| transform.translation);
-                world_state.game_bounds = compute_game_bounds(&terrain_query);
-                world_state.platforms = collect_platform_positions(&terrain_query);
-                world_state.mob_position =
-                    mob_query.iter().next().map(|transform| transform.translation);
-                world_state.game_state = Some(format!("{:?}", game_state.get()));
-            }
+
+            queue.internal.push_back(InternalAction::PlayerMove {
+                direction,
+                active: false,
+            });
+        }
+        McpAction::GetGameStatus => {
+            world_state.player_position = player_query
+                .iter()
+                .next()
+                .map(|transform| transform.translation);
+            world_state.game_bounds = compute_game_bounds(&terrain_query);
+            world_state.platforms = collect_platform_positions(&terrain_query);
+            world_state.mob_position = mob_query
+                .iter()
+                .next()
+                .map(|transform| transform.translation);
+            world_state.game_state = Some(format!("{:?}", game_state.get()));
         }
     }
 }
@@ -124,7 +156,8 @@ fn collect_platform_positions(
     terrain_query
         .iter()
         .filter(|(_, _, name)| {
-            name.map(|n| n.as_str().starts_with("Platform")).unwrap_or(false)
+            name.map(|n| n.as_str().starts_with("Platform"))
+                .unwrap_or(false)
         })
         .map(|(transform, _, _)| transform.translation)
         .collect()
