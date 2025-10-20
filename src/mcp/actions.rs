@@ -39,6 +39,7 @@ pub enum McpAction {
     StartGame,
     StopGame,
     Move(McpMoveAction),
+    JumpAndMove(McpMoveAction),
     Jump,
     GetGameStatus,
 }
@@ -92,27 +93,10 @@ pub fn consume_actions(
         McpAction::StartGame => commands.trigger(StartGame),
         McpAction::StopGame => commands.trigger(QuitGame),
         McpAction::Jump => commands.trigger(PlayerJump),
-        McpAction::Move(move_action) => {
-            let direction = match move_action.direction {
-                McpMoveDirection::Left => Direction::Left,
-                McpMoveDirection::Right => Direction::Right,
-            };
-
-            let steps = move_action.steps.unwrap_or(DEFAULT_MOVE_STEPS).max(1);
-            commands.trigger(PlayerMove {
-                direction,
-                active: true,
-            });
-
-            let wait_frames = steps.saturating_sub(1);
-            for _ in 0..wait_frames {
-                queue.internal.push_back(InternalAction::Wait);
-            }
-
-            queue.internal.push_back(InternalAction::PlayerMove {
-                direction,
-                active: false,
-            });
+        McpAction::Move(move_action) => schedule_move_action(queue.as_mut(), &mut commands, move_action),
+        McpAction::JumpAndMove(move_action) => {
+            commands.trigger(PlayerJump);
+            schedule_move_action(queue.as_mut(), &mut commands, move_action);
         }
         McpAction::GetGameStatus => {
             world_state.player_position = player_query
@@ -128,6 +112,33 @@ pub fn consume_actions(
             world_state.game_state = Some(format!("{:?}", game_state.get()));
         }
     }
+}
+
+fn schedule_move_action(
+    queue: &mut McpActionQueue,
+    commands: &mut Commands,
+    move_action: McpMoveAction,
+) {
+    let direction = match move_action.direction {
+        McpMoveDirection::Left => Direction::Left,
+        McpMoveDirection::Right => Direction::Right,
+    };
+
+    let steps = move_action.steps.unwrap_or(DEFAULT_MOVE_STEPS).max(1);
+    commands.trigger(PlayerMove {
+        direction,
+        active: true,
+    });
+
+    let wait_frames = steps.saturating_sub(1);
+    for _ in 0..wait_frames {
+        queue.internal.push_back(InternalAction::Wait);
+    }
+
+    queue.internal.push_back(InternalAction::PlayerMove {
+        direction,
+        active: false,
+    });
 }
 
 fn compute_game_bounds(

@@ -8,6 +8,11 @@ This guide summarizes the practical steps for driving the prototype through the 
   {"resource":"bevy_barcamp::mcp::actions::McpActionQueue","value":{"actions":[...]}}
   ```
   to push gameplay inputs. Queue multiple actions at once (e.g. `["StartGame","GetGameStatus"]`). The queue resolves one action per frame. `Move` keeps the direction held for the requested number of update cycles (default 10) and automatically releases afterward, so downstream actions execute once the movement completes.
+- **Jump-and-hold**: `JumpAndMove` bundles an immediate `Jump` with a held move. Example:  
+  ```json
+  {"JumpAndMove":{"direction":"Right","steps":12}}
+  ```
+  fires the jump this frame, holds the right input for 12 update cycles (auto-releasing at the end), and then continues with whatever actions follow. Use it when you need horizontal momentum during the ascent without micromanaging separate `Jump`/`Move` entries.
 - **World snapshot**: After queuing `GetGameStatus`, fetch the data via `brp_execute` → `method:"world.get_resources"` with `{"resource":"bevy_barcamp::mcp::actions::McpWorldState"}`. The snapshot exposes:
   - `player_position` (Vec3)
   - `game_bounds` (left/right/top/bottom)
@@ -59,8 +64,7 @@ This guide summarizes the practical steps for driving the prototype through the 
   ```json
   {
     "actions": [
-      "Jump",
-      {"Move":{"direction":"Right","steps":8}},
+      {"JumpAndMove":{"direction":"Right","steps":8}},
       {"Move":{"direction":"Right","steps":6}},
       "GetGameStatus"
     ]
