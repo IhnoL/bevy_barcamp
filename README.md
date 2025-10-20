@@ -1,4 +1,4 @@
-# bevy_barcamp
+# Awesome barcamp game
 
 This project uses [Rust](https://www.rust-lang.org/learn/get-started) and [Bevy 0.17](https://bevy.org/learn/quick-start/introduction/) as a reference implementation for an AI-assisted game development workflow with an emphasis on automated testing.
 
