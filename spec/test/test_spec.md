@@ -16,13 +16,16 @@
 - VerifyPlayerMoved(direction:=left)
 
 ## Terrain-Test
-- VerifyTerrainSpawned()
+- VerifyTerrainSpawned
 
 ## Player-Test
-- VerifyPlayerSpawned()
+- VerifyPlayerSpawned
 
 ## Jump-Test 
 - CapturePlayerPosition
 - JumpPlayer
 - VerifyPlayerIsInTheAir (reacts to `Grounded` removal)
 - VerifyPlayerIsAtCapturedPosition (reacts to `Grounded` addition)
+
+## Teardown-Test
+- VerifyEntitiesDespawned
