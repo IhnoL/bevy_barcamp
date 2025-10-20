@@ -2,6 +2,10 @@
 
 This project uses [Rust](https://www.rust-lang.org/learn/get-started) and [Bevy 0.17](https://bevy.org/learn/quick-start/introduction/) as a reference implementation for an AI-assisted game development workflow with an emphasis on automated testing.
 
+![Game Screenshot](docs/screenshot.png)
+
+*A simple 2D platformer demonstrating the AI-assisted game development workflow.*
+
 ## Getting Started
 
 - Install the Rust toolchain by following the official setup guide linked above.
@@ -19,5 +23,4 @@ This project uses [Rust](https://www.rust-lang.org/learn/get-started) and [Bevy 
 
 - Architecture overview: [spec/architecture.mmd](spec/architecture.mmd)
 - Test architecture: [spec/test/test_architecture.mmd](spec/test/test_architecture.mmd)
-- Test event flow: [spec/test/test_event_flowchart.mmd](spec/test/test_event_flowchart.mmd)
 - Agents context: [AGENTS.md](AGENTS.md)
