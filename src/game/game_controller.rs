@@ -13,6 +13,7 @@ pub struct GameControllerPlugin;
 impl Plugin for GameControllerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UnfinishedStateTransitions>()
+            .init_state::<GameState>()
             .init_resource::<TargetState>()
             .add_plugins((
                 TerrainPlugin,

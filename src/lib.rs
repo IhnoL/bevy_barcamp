@@ -8,9 +8,7 @@ use bevy::prelude::{default, App, DefaultPlugins, Vec2, Window, WindowPlugin};
 use bevy::state::app::AppExtStates;
 use bevy::window::PresentMode;
 use crate::game::game_controller::GameControllerPlugin;
-use crate::game::includes::state::GameState;
 
-/// Configures the base Bevy app with the standard plugin stack for runtime and a minimal one during tests.
 pub fn init(mut app: App) -> App {
     const GRAVITY: f32 = 2400.0;
 
@@ -26,7 +24,6 @@ pub fn init(mut app: App) -> App {
     ))
     .insert_resource(Gravity(Vec2::NEG_Y * GRAVITY))
     .add_plugins(McpPlugin)
-    .add_plugins(GameControllerPlugin)
-    .init_state::<GameState>();
+    .add_plugins(GameControllerPlugin);
     app
 }
