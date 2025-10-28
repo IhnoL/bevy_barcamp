@@ -36,3 +36,7 @@ I want to have an mcp server running inside of the game which allows the ai codi
 agent (you) to interact better which the game. E.g. taking screenshots. Lets
 develop a plan for this without any code yet. How can we achieve this? Suggest some
 solution possibilities
+
+Can you create me a short presentation on the bevy game engine? I want multiple "slides" each in its own readme file. Something in the range of 10 slides.                                                                                                                                    
+The essentials of bevy should be covered: Events, Systems, States, ... . The readmes should contain mermaid diagrams for visualization. Create a new                                                                                                                                           
+directory for this. No technical details just high level. No Code just nice presentation

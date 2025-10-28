@@ -232,11 +232,11 @@ fn refresh_grounded_status(
         return;
     };
 
-    let grounded_now = collisions
+    let has_collisions = collisions
         .iter()
         .any(|entity| terrain_query.get(*entity).is_ok());
 
-    match (grounded_now, grounded) {
+    match (has_collisions, grounded) {
         (true, None) => {
             commands.entity(entity).insert(Grounded);
         }
