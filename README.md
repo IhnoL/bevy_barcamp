@@ -15,7 +15,8 @@ This project uses [Rust](https://www.rust-lang.org/learn/get-started) and [Bevy 
 
 ## MCP / BRP Access
 
-- Install the MCP server once: `cargo install bevy_brp_mcp`.
+- Install the MCP server once: `cargo install bevy_brp_mcp`
+- Register with Claude Code: `claude mcp add --transport stdio bevy-brp bevy_brp_mcp`
 - Register it with Codex (or compatible tooling): `codex mcp add bevy-brp -- bevy_brp_mcp`.
 - Run the game (`cargo run`) to expose the Bevy Remote Protocol with `RemotePlugin` and `BrpExtrasPlugin` enabled.
 
